@@ -1,0 +1,355 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-06-07",
+
+  "plants": [
+    {
+      "id": "tomato-cherry",
+      "name": "Cherry Tomato",
+      "latin_name": "Solanum lycopersicum var. cerasiforme",
+      "category": "vegetable",
+      "sowing": {
+        "indoors_weeks_before_last_frost": 6,
+        "direct_sow": false,
+        "seed_depth_cm": 0.5,
+        "germination_days_min": 5,
+        "germination_days_max": 10
+      },
+      "transplant": {
+        "weeks_after_last_frost": 2
+      },
+      "harvest": {
+        "days_to_maturity_min": 60,
+        "days_to_maturity_max": 80
+      },
+      "spacing": {
+        "plant_spacing_cm": 50,
+        "row_spacing_cm": 90
+      },
+      "care": {
+        "sunlight": "full_sun",
+        "watering": "regular",
+        "notes": "Water deeply 1-2 times per week. Stake or cage when 30 cm tall. Pinch suckers for larger fruit."
+      }
+    },
+    {
+      "id": "courgette",
+      "name": "Courgette (Zucchini)",
+      "latin_name": "Cucurbita pepo",
+      "category": "vegetable",
+      "sowing": {
+        "indoors_weeks_before_last_frost": 3,
+        "direct_sow": true,
+        "seed_depth_cm": 2.5,
+        "germination_days_min": 7,
+        "germination_days_max": 14
+      },
+      "transplant": {
+        "weeks_after_last_frost": 1
+      },
+      "harvest": {
+        "days_to_maturity_min": 45,
+        "days_to_maturity_max": 60
+      },
+      "spacing": {
+        "plant_spacing_cm": 90,
+        "row_spacing_cm": 120
+      },
+      "care": {
+        "sunlight": "full_sun",
+        "watering": "regular",
+        "notes": "Harvest when 15-20 cm long for best flavour. Hand-pollinate if no insects present. One or two plants is usually plenty."
+      }
+    },
+    {
+      "id": "carrot-nantes",
+      "name": "Carrot (Nantes)",
+      "latin_name": "Daucus carota",
+      "category": "vegetable",
+      "sowing": {
+        "indoors_weeks_before_last_frost": null,
+        "direct_sow": true,
+        "seed_depth_cm": 0.5,
+        "germination_days_min": 10,
+        "germination_days_max": 20
+      },
+      "transplant": null,
+      "harvest": {
+        "days_to_maturity_min": 65,
+        "days_to_maturity_max": 75
+      },
+      "spacing": {
+        "plant_spacing_cm": 5,
+        "row_spacing_cm": 30
+      },
+      "care": {
+        "sunlight": "full_sun",
+        "watering": "moderate",
+        "notes": "Thin to 5 cm apart when seedlings reach 5 cm tall. Keep soil evenly moist to avoid forked roots. Do not fertilise with fresh manure."
+      }
+    },
+    {
+      "id": "basil-genovese",
+      "name": "Basil (Genovese)",
+      "latin_name": "Ocimum basilicum",
+      "category": "herb",
+      "sowing": {
+        "indoors_weeks_before_last_frost": 4,
+        "direct_sow": true,
+        "seed_depth_cm": 0.3,
+        "germination_days_min": 5,
+        "germination_days_max": 10
+      },
+      "transplant": {
+        "weeks_after_last_frost": 2
+      },
+      "harvest": {
+        "days_to_maturity_min": 25,
+        "days_to_maturity_max": 30
+      },
+      "spacing": {
+        "plant_spacing_cm": 25,
+        "row_spacing_cm": 30
+      },
+      "care": {
+        "sunlight": "full_sun",
+        "watering": "regular",
+        "notes": "Pinch flowers immediately to prolong leaf production. Sensitive to cold; do not plant out below 10°C. Water at the base to prevent fungal disease."
+      }
+    },
+    {
+      "id": "lettuce-butter",
+      "name": "Butter Lettuce",
+      "latin_name": "Lactuca sativa",
+      "category": "vegetable",
+      "sowing": {
+        "indoors_weeks_before_last_frost": 4,
+        "direct_sow": true,
+        "seed_depth_cm": 0.3,
+        "germination_days_min": 7,
+        "germination_days_max": 14
+      },
+      "transplant": {
+        "weeks_after_last_frost": -2
+      },
+      "harvest": {
+        "days_to_maturity_min": 55,
+        "days_to_maturity_max": 70
+      },
+      "spacing": {
+        "plant_spacing_cm": 25,
+        "row_spacing_cm": 30
+      },
+      "care": {
+        "sunlight": "partial_shade",
+        "watering": "regular",
+        "notes": "Sow successively every 2-3 weeks for continuous harvest. Tolerates light frost. Bolts in high heat — provide afternoon shade in summer."
+      }
+    },
+    {
+      "id": "pea-sugar-snap",
+      "name": "Sugar Snap Pea",
+      "latin_name": "Pisum sativum var. macrocarpon",
+      "category": "vegetable",
+      "sowing": {
+        "indoors_weeks_before_last_frost": null,
+        "direct_sow": true,
+        "seed_depth_cm": 3,
+        "germination_days_min": 7,
+        "germination_days_max": 14
+      },
+      "transplant": null,
+      "harvest": {
+        "days_to_maturity_min": 60,
+        "days_to_maturity_max": 70
+      },
+      "spacing": {
+        "plant_spacing_cm": 5,
+        "row_spacing_cm": 60
+      },
+      "care": {
+        "sunlight": "full_sun",
+        "watering": "moderate",
+        "notes": "Provide trellis or netting at least 1.5 m tall. Sow as soon as soil can be worked in spring. Do not over-fertilise with nitrogen."
+      }
+    }
+  ],
+
+  "seeds": [
+    {
+      "id": "seed-01",
+      "plant_id": "tomato-cherry",
+      "variety": "Sungold F1",
+      "supplier": "Kings Seeds",
+      "purchase_date": "2026-01-15",
+      "expiry_year": 2028,
+      "quantity_seeds": 15,
+      "notes": "Excellent flavour. Save F2 seed for trial next year."
+    },
+    {
+      "id": "seed-02",
+      "plant_id": "courgette",
+      "variety": "Defender F1",
+      "supplier": "Thompson & Morgan",
+      "purchase_date": "2026-02-01",
+      "expiry_year": 2027,
+      "quantity_seeds": 6,
+      "notes": ""
+    },
+    {
+      "id": "seed-03",
+      "plant_id": "carrot-nantes",
+      "variety": "Amsterdam Forcing",
+      "supplier": "DT Brown",
+      "purchase_date": "2025-12-10",
+      "expiry_year": 2028,
+      "quantity_seeds": 500,
+      "notes": "Approximately 500 seeds in packet."
+    },
+    {
+      "id": "seed-04",
+      "plant_id": "basil-genovese",
+      "variety": "Classico",
+      "supplier": "Chiltern Seeds",
+      "purchase_date": "2026-03-20",
+      "expiry_year": 2027,
+      "quantity_seeds": 200,
+      "notes": ""
+    },
+    {
+      "id": "seed-05",
+      "plant_id": "lettuce-butter",
+      "variety": "All Year Round",
+      "supplier": "Kings Seeds",
+      "purchase_date": "2026-01-15",
+      "expiry_year": 2028,
+      "quantity_seeds": 300,
+      "notes": "Split packet with neighbour — around 150 seeds remaining."
+    },
+    {
+      "id": "seed-06",
+      "plant_id": "pea-sugar-snap",
+      "variety": "Cascadia",
+      "supplier": "West Coast Seeds",
+      "purchase_date": "2025-11-05",
+      "expiry_year": 2027,
+      "quantity_seeds": 80,
+      "notes": ""
+    }
+  ],
+
+  "garden": {
+    "id": "main-garden",
+    "name": "My Garden",
+    "location_notes": "South-facing back garden. Last frost date: approximately 15 April.",
+    "beds": [
+      {
+        "id": "bed-a",
+        "name": "Bed A — Raised Brassica",
+        "length_m": 2.4,
+        "width_m": 1.2,
+        "notes": "Raised bed, 30 cm deep. Good drainage.",
+        "plantings": []
+      },
+      {
+        "id": "bed-b",
+        "name": "Bed B — Salads & Herbs",
+        "length_m": 1.8,
+        "width_m": 1.2,
+        "notes": "Partial afternoon shade from fence. Good for lettuce.",
+        "plantings": [
+          {
+            "id": "planting-01",
+            "plant_id": "lettuce-butter",
+            "seed_id": "seed-05",
+            "status": "growing",
+            "sown_date": "2026-04-10",
+            "transplant_date": "2026-05-01",
+            "expected_harvest_date": "2026-06-15",
+            "actual_harvest_date": null,
+            "quantity_plants": 6,
+            "notes": "First succession. Sow second batch 2026-04-30."
+          },
+          {
+            "id": "planting-02",
+            "plant_id": "basil-genovese",
+            "seed_id": "seed-04",
+            "status": "growing",
+            "sown_date": "2026-04-20",
+            "transplant_date": "2026-05-15",
+            "expected_harvest_date": "2026-06-20",
+            "actual_harvest_date": null,
+            "quantity_plants": 4,
+            "notes": ""
+          }
+        ]
+      },
+      {
+        "id": "bed-c",
+        "name": "Bed C — Tomatoes & Courgette",
+        "length_m": 3.0,
+        "width_m": 1.5,
+        "notes": "Sunniest spot. Against south wall for extra heat.",
+        "plantings": [
+          {
+            "id": "planting-03",
+            "plant_id": "tomato-cherry",
+            "seed_id": "seed-01",
+            "status": "growing",
+            "sown_date": "2026-03-01",
+            "transplant_date": "2026-05-10",
+            "expected_harvest_date": "2026-07-20",
+            "actual_harvest_date": null,
+            "quantity_plants": 3,
+            "notes": "Staked. Pinched main shoot at 5 trusses."
+          },
+          {
+            "id": "planting-04",
+            "plant_id": "courgette",
+            "seed_id": "seed-02",
+            "status": "planned",
+            "sown_date": null,
+            "transplant_date": "2026-06-01",
+            "expected_harvest_date": "2026-07-20",
+            "actual_harvest_date": null,
+            "quantity_plants": 2,
+            "notes": "Direct sow or start indoors end of May."
+          }
+        ]
+      },
+      {
+        "id": "bed-d",
+        "name": "Bed D — Root Veg & Peas",
+        "length_m": 2.4,
+        "width_m": 1.2,
+        "notes": "Deep loamy soil, no recent manure. Pea netting at north end.",
+        "plantings": [
+          {
+            "id": "planting-05",
+            "plant_id": "pea-sugar-snap",
+            "seed_id": "seed-06",
+            "status": "harvesting",
+            "sown_date": "2026-03-20",
+            "transplant_date": null,
+            "expected_harvest_date": "2026-06-01",
+            "actual_harvest_date": null,
+            "quantity_plants": 20,
+            "notes": "On trellis. Picking now every 2-3 days."
+          },
+          {
+            "id": "planting-06",
+            "plant_id": "carrot-nantes",
+            "seed_id": "seed-03",
+            "status": "growing",
+            "sown_date": "2026-04-15",
+            "transplant_date": null,
+            "expected_harvest_date": "2026-07-01",
+            "actual_harvest_date": null,
+            "quantity_plants": 60,
+            "notes": "Thinned to 5 cm. Covered with fleece during cold snap."
+          }
+        ]
+      }
+    ]
+  }
+}

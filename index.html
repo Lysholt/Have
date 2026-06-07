@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Garden Planner</title>
+  <style>
+    :root {
+      --green-dark: #2d5a27;
+      --green-mid: #4a8c3f;
+      --green-light: #8bc34a;
+      --green-pale: #f1f8e9;
+      --brown: #795548;
+      --brown-light: #efebe9;
+      --orange: #e65100;
+      --blue: #1565c0;
+      --grey: #546e7a;
+      --white: #fff;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f4f6f3;
+      color: #222;
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--green-dark);
+      color: var(--white);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    header h1 { font-size: 1.5rem; font-weight: 700; }
+    header span { font-size: 1.75rem; }
+
+    nav {
+      background: var(--green-mid);
+      display: flex;
+      gap: 0;
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.8);
+      padding: 0.6rem 1.4rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    nav button:hover { background: rgba(255,255,255,0.1); }
+    nav button.active { background: rgba(255,255,255,0.2); color: #fff; font-weight: 600; }
+
+    main { padding: 1.5rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+    section { display: none; }
+    section.active { display: block; }
+
+    h2 { font-size: 1.25rem; color: var(--green-dark); margin-bottom: 1rem; }
+    h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+    /* Cards grid */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid #dde3d8;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .card h3 { color: var(--green-dark); }
+    .card .latin { font-style: italic; font-size: 0.82rem; color: var(--grey); margin-bottom: 0.5rem; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .badge.vegetable { background: #e8f5e9; color: #2e7d32; }
+    .badge.herb      { background: #fff8e1; color: #f57f17; }
+    .badge.flower    { background: #fce4ec; color: #880e4f; }
+    .badge.fruit     { background: #e3f2fd; color: #1565c0; }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      padding: 0.2rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row .label { color: var(--grey); }
+    .detail-row .value { font-weight: 500; text-align: right; max-width: 60%; }
+
+    .notes-box {
+      margin-top: 0.6rem;
+      font-size: 0.82rem;
+      color: #555;
+      background: var(--green-pale);
+      border-left: 3px solid var(--green-light);
+      padding: 0.4rem 0.6rem;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* Status badges */
+    .status {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+    .status.planned    { background: #e3f2fd; color: var(--blue); }
+    .status.sown       { background: #fff9c4; color: #7c6000; }
+    .status.growing    { background: #e8f5e9; color: #2e7d32; }
+    .status.harvesting { background: #e0f2f1; color: #00695c; }
+    .status.harvested  { background: #ede7f6; color: #4527a0; }
+    .status.failed     { background: #fbe9e7; color: #bf360c; }
+
+    /* Garden layout */
+    .beds { display: flex; flex-direction: column; gap: 1.25rem; }
+    .bed-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid #dde3d8;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .bed-header {
+      background: var(--green-pale);
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid #d4e0cd;
+    }
+    .bed-header h3 { color: var(--green-dark); flex: 1; }
+    .bed-dims { font-size: 0.8rem; color: var(--grey); }
+    .bed-body { padding: 0.75rem 1rem; }
+    .bed-notes { font-size: 0.82rem; color: var(--grey); margin-bottom: 0.75rem; }
+
+    .plantings-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .plantings-table th {
+      text-align: left;
+      color: var(--grey);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.3rem 0.5rem;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .plantings-table td {
+      padding: 0.4rem 0.5rem;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+    .plantings-table tr:last-child td { border-bottom: none; }
+    .no-plantings { font-size: 0.85rem; color: var(--grey); font-style: italic; }
+
+    /* Seed inventory */
+    .seed-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .seed-table th {
+      background: var(--green-pale);
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--green-dark);
+      border-bottom: 2px solid #d4e0cd;
+    }
+    .seed-table td { padding: 0.5rem 0.8rem; border-bottom: 1px solid #f0f0f0; }
+    .seed-table tr:last-child td { border-bottom: none; }
+    .seed-table tr:hover td { background: #fafff9; }
+    .expiry-warn { color: var(--orange); font-weight: 600; }
+
+    .sunlight-icon { font-size: 1rem; }
+
+    @media (max-width: 600px) {
+      main { padding: 1rem; }
+      nav button { padding: 0.5rem 0.75rem; font-size: 0.85rem; }
+      .seed-table, .plantings-table { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span>🌱</span>
+  <h1>Garden Planner</h1>
+</header>
+
+<nav>
+  <button class="active" onclick="show('plants', this)">Plants</button>
+  <button onclick="show('garden', this)">Garden Beds</button>
+  <button onclick="show('seeds', this)">Seed Inventory</button>
+</nav>
+
+<main>
+  <section id="plants" class="active">
+    <h2>Plant Catalogue</h2>
+    <div class="cards" id="plant-cards"></div>
+  </section>
+
+  <section id="garden">
+    <h2>Garden Layout</h2>
+    <div class="beds" id="bed-list"></div>
+  </section>
+
+  <section id="seeds">
+    <h2>Seed Inventory</h2>
+    <table class="seed-table" id="seed-table">
+      <thead>
+        <tr>
+          <th>Plant</th>
+          <th>Variety</th>
+          <th>Supplier</th>
+          <th>Purchased</th>
+          <th>Expires</th>
+          <th>Qty (seeds)</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="seed-rows"></tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+  const currentYear = new Date().getFullYear();
+
+  function show(id, btn) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function sunlightLabel(v) {
+    return { full_sun: '☀️ Full sun', partial_shade: '⛅ Partial shade', full_shade: '🌥️ Full shade' }[v] || v;
+  }
+
+  function sowingInfo(p) {
+    if (!p.sowing) return '—';
+    const parts = [];
+    if (p.sowing.indoors_weeks_before_last_frost)
+      parts.push(`Start indoors ${p.sowing.indoors_weeks_before_last_frost} wks before last frost`);
+    if (p.sowing.direct_sow) parts.push('Direct sow OK');
+    return parts.join(' · ') || '—';
+  }
+
+  function dateOrDash(d) { return d || '—'; }
+
+  fetch('garden-data.json')
+    .then(r => r.json())
+    .then(data => {
+      const plantMap = Object.fromEntries(data.plants.map(p => [p.id, p]));
+
+      // --- Plants ---
+      const plantCards = document.getElementById('plant-cards');
+      data.plants.forEach(p => {
+        const harvest = p.harvest
+          ? `${p.harvest.days_to_maturity_min}–${p.harvest.days_to_maturity_max} days`
+          : '—';
+        const germ = p.sowing
+          ? `${p.sowing.germination_days_min}–${p.sowing.germination_days_max} days`
+          : '—';
+        const spacing = `${p.spacing.plant_spacing_cm} cm apart · ${p.spacing.row_spacing_cm} cm rows`;
+        const depth = p.sowing ? `${p.sowing.seed_depth_cm} cm` : '—';
+
+        plantCards.innerHTML += `
+          <div class="card">
+            <span class="badge ${p.category}">${p.category}</span>
+            <h3>${p.name}</h3>
+            <p class="latin">${p.latin_name}</p>
+            <div class="detail-row"><span class="label">Sowing</span><span class="value">${sowingInfo(p)}</span></div>
+            <div class="detail-row"><span class="label">Seed depth</span><span class="value">${depth}</span></div>
+            <div class="detail-row"><span class="label">Germination</span><span class="value">${germ}</span></div>
+            <div class="detail-row"><span class="label">Days to harvest</span><span class="value">${harvest}</span></div>
+            <div class="detail-row"><span class="label">Spacing</span><span class="value">${spacing}</span></div>
+            <div class="detail-row"><span class="label">Sunlight</span><span class="value">${sunlightLabel(p.care.sunlight)}</span></div>
+            <div class="detail-row"><span class="label">Watering</span><span class="value">${p.care.watering}</span></div>
+            ${p.care.notes ? `<div class="notes-box">${p.care.notes}</div>` : ''}
+          </div>`;
+      });
+
+      // --- Garden beds ---
+      const bedList = document.getElementById('bed-list');
+      const garden = data.garden;
+      garden.beds.forEach(bed => {
+        const area = (bed.length_m * bed.width_m).toFixed(1);
+        let plantingsHTML = '';
+        if (!bed.plantings || bed.plantings.length === 0) {
+          plantingsHTML = `<p class="no-plantings">No plantings recorded.</p>`;
+        } else {
+          const rows = bed.plantings.map(pl => {
+            const plant = plantMap[pl.plant_id];
+            const name = plant ? plant.name : pl.plant_id;
+            return `<tr>
+              <td>${name}</td>
+              <td><span class="status ${pl.status}">${pl.status}</span></td>
+              <td>${dateOrDash(pl.sown_date)}</td>
+              <td>${dateOrDash(pl.transplant_date)}</td>
+              <td>${dateOrDash(pl.expected_harvest_date)}</td>
+              <td>${pl.quantity_plants ?? '—'}</td>
+              <td>${pl.notes || ''}</td>
+            </tr>`;
+          }).join('');
+          plantingsHTML = `<table class="plantings-table">
+            <thead><tr>
+              <th>Plant</th><th>Status</th><th>Sown</th><th>Transplanted</th><th>Expected harvest</th><th>Plants</th><th>Notes</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+        }
+        bedList.innerHTML += `
+          <div class="bed-card">
+            <div class="bed-header">
+              <h3>${bed.name}</h3>
+              <span class="bed-dims">${bed.length_m} m × ${bed.width_m} m (${area} m²)</span>
+            </div>
+            <div class="bed-body">
+              ${bed.notes ? `<p class="bed-notes">${bed.notes}</p>` : ''}
+              ${plantingsHTML}
+            </div>
+          </div>`;
+      });
+
+      // --- Seed inventory ---
+      const seedRows = document.getElementById('seed-rows');
+      data.seeds.forEach(s => {
+        const plant = plantMap[s.plant_id];
+        const plantName = plant ? plant.name : s.plant_id;
+        const expiring = s.expiry_year <= currentYear + 1;
+        seedRows.innerHTML += `<tr>
+          <td>${plantName}</td>
+          <td><strong>${s.variety}</strong></td>
+          <td>${s.supplier}</td>
+          <td>${s.purchase_date}</td>
+          <td class="${expiring ? 'expiry-warn' : ''}">${s.expiry_year}</td>
+          <td>${s.quantity_seeds}</td>
+          <td>${s.notes || ''}</td>
+        </tr>`;
+      });
+    })
+    .catch(err => {
+      document.querySelector('main').innerHTML = `<p style="color:red">Could not load garden-data.json: ${err.message}</p>`;
+    });
+</script>
+</body>
+</html>
