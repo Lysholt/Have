@@ -187,8 +187,9 @@
     <div class="map-toolbar">
       <span class="map-pos-display" id="map-pos-display">Click a bed to edit · Drag to move</span>
       <div class="map-toolbar-right">
+        <button class="tool-btn" id="undo-btn" onclick="undo()" disabled title="Undo last change (drag or edit)">↩ Undo</button>
         <button class="tool-btn" onclick="resetAll()">Reset all</button>
-        <button class="tool-btn tool-btn-primary" onclick="exportJSON()">Export JSON</button>
+        <button class="tool-btn tool-btn-primary" onclick="exportJSON()" title="Download garden-data.json with all changes baked in">Save JSON</button>
       </div>
     </div>
     <div id="map-wrap">
@@ -241,7 +242,7 @@
 
       </div><!-- /sidebar -->
     </div><!-- /map-wrap -->
-    <p class="map-hint">Drag beds to move · Click to edit name, colour & size · 25 cm snap grid · Auto-saved in browser</p>
+    <p class="map-hint">Drag beds to move · Click to edit name, colour & size · 25 cm snap grid · Auto-saved in browser · Use ↩ Undo to revert the last drag or edit · Save JSON to export changes to file</p>
   </section>
 </main>
 
@@ -278,6 +279,8 @@
     if (!confirm('Reset all positions and edits back to defaults?')) return;
     localStorage.removeItem(POS_KEY);
     localStorage.removeItem(OV_KEY);
+    undoStack = [];
+    refreshUndoBtn();
     closeEditor();
     layoutRendered = false;
     if (gardenData) { renderLayout(gardenData); layoutRendered = true; }
@@ -301,6 +304,34 @@
     a.href = URL.createObjectURL(blob);
     a.download = 'garden-data.json';
     a.click();
+  }
+
+  /* ── undo history ── */
+  let undoStack = [];
+
+  function pushHistory(state) {
+    undoStack.push(state || {
+      pos: JSON.parse(JSON.stringify(loadPos())),
+      ov:  JSON.parse(JSON.stringify(loadOv()))
+    });
+    if (undoStack.length > 20) undoStack.shift();
+    refreshUndoBtn();
+  }
+
+  function undo() {
+    if (!undoStack.length) return;
+    const prev = undoStack.pop();
+    savePos(prev.pos);
+    saveOv(prev.ov);
+    closeEditor();
+    layoutRendered = false;
+    if (gardenData) { renderLayout(gardenData); layoutRendered = true; }
+    refreshUndoBtn();
+  }
+
+  function refreshUndoBtn() {
+    const btn = document.getElementById('undo-btn');
+    if (btn) btn.disabled = undoStack.length === 0;
   }
 
   /* ── editor state ── */
@@ -329,6 +360,7 @@
 
   function saveBedEdit() {
     if (!editingBedId || !gardenData) return;
+    pushHistory();
     const ov = loadOv();
     ov[editingBedId] = {
       name:     document.getElementById('edit-name').value.trim(),
@@ -553,6 +585,11 @@
           posLabel.textContent = `Editing ${shortName}`;
           return;
         }
+
+        // push pre-drag state for undo (bed's pre-drag position via originPos)
+        const prevPosSnap = loadPos();
+        prevPosSnap[bed.id] = { ...originPos };
+        pushHistory({ pos: prevPosSnap, ov: JSON.parse(JSON.stringify(ov)) });
 
         // snap on drop
         const fx = clamp(snapV(pos[bed.id].x_m), 0, CW-lm);
