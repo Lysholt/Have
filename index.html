@@ -33,6 +33,7 @@
     section.active { display: block; }
     h2 { font-size: 1.25rem; color: var(--green-dark); margin-bottom: 1rem; }
 
+    /* Plant cards */
     .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1rem; }
     .card { background: var(--white); border-radius: var(--radius); border: 1px solid #dde3d8; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
     .card h3 { color: var(--green-dark); font-size: 1rem; }
@@ -48,6 +49,7 @@
     .detail-row .value { font-weight: 500; text-align: right; max-width: 60%; }
     .notes-box { margin-top: .6rem; font-size: .82rem; color: #555; background: var(--green-pale); border-left: 3px solid var(--green-light); padding: .4rem .6rem; border-radius: 0 4px 4px 0; }
 
+    /* Status */
     .status { display: inline-block; font-size: .75rem; font-weight: 600; padding: .15rem .5rem; border-radius: 4px; }
     .status.planned    { background: #e3f2fd; color: var(--blue); }
     .status.sown       { background: #fff9c4; color: #7c6000; }
@@ -56,6 +58,7 @@
     .status.harvested  { background: #ede7f6; color: #4527a0; }
     .status.failed     { background: #fbe9e7; color: #bf360c; }
 
+    /* Beds list */
     .beds { display: flex; flex-direction: column; gap: 1.25rem; }
     .bed-card { background: var(--white); border-radius: var(--radius); border: 1px solid #dde3d8; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
     .bed-header { background: var(--green-pale); padding: .65rem 1rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid #d4e0cd; }
@@ -69,6 +72,7 @@
     .plantings-table tr:last-child td { border-bottom: none; }
     .no-plantings { font-size: .85rem; color: var(--grey); font-style: italic; }
 
+    /* Seed table */
     .seed-table { width: 100%; border-collapse: collapse; font-size: .85rem; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
     .seed-table th { background: var(--green-pale); text-align: left; padding: .6rem .8rem; font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--green-dark); border-bottom: 2px solid #d4e0cd; }
     .seed-table td { padding: .5rem .8rem; border-bottom: 1px solid #f0f0f0; }
@@ -76,6 +80,7 @@
     .seed-table tr:hover td { background: #fafff9; }
     .expiry-warn { color: var(--orange); font-weight: 600; }
 
+    /* Map toolbar */
     .map-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; gap: 1rem; flex-wrap: wrap; }
     .map-toolbar-right { display: flex; gap: .5rem; }
     .tool-btn { background: var(--white); border: 1px solid #ccc; border-radius: 5px; padding: .35rem .8rem; font-size: .82rem; cursor: pointer; color: #444; transition: background .12s; }
@@ -84,17 +89,20 @@
     .tool-btn-primary:hover { background: var(--green-dark); }
     .map-pos-display { font-size: .78rem; color: var(--grey); font-family: monospace; min-height: 1em; flex: 1; }
 
+    /* Map layout */
     #map-wrap { display: flex; gap: 1.25rem; align-items: flex-start; flex-wrap: wrap; }
     #map-scroll { overflow: auto; border-radius: 8px; border: 1px solid #a5d6a7; max-width: 100%; }
     #garden-svg { display: block; user-select: none; }
     .map-hint { font-size: .79rem; color: var(--grey); margin-top: .65rem; }
 
+    /* Sidebar (legend + editor) */
     #map-sidebar { display: flex; flex-direction: column; gap: 1rem; min-width: 190px; }
     #map-legend { background: var(--white); border: 1px solid #dde3d8; border-radius: var(--radius); padding: .75rem 1rem; font-size: .84rem; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
     .legend-title { font-weight: 700; color: var(--green-dark); margin-bottom: .5rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
     .legend-item { display: flex; align-items: center; gap: .5rem; margin-bottom: .3rem; font-size: .82rem; }
     .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,.12); }
 
+    /* Bed editor panel */
     #bed-editor {
       background: var(--white);
       border: 1px solid #dde3d8;
@@ -107,24 +115,31 @@
       background: var(--green-pale);
       border-bottom: 1px solid #d4e0cd;
       padding: .55rem .85rem;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     .editor-header strong { font-size: .9rem; color: var(--green-dark); }
-    .editor-close { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--grey); padding: 0; }
+    .editor-close { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--grey); line-height: 1; padding: 0; }
     .editor-close:hover { color: #333; }
     .editor-body { padding: .75rem .85rem; display: flex; flex-direction: column; gap: .55rem; }
     .editor-field label { display: block; font-size: .73rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--grey); margin-bottom: .2rem; }
     .editor-field input[type="text"],
-    .editor-field input[type="number"] { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: .3rem .5rem; font-size: .85rem; font-family: inherit; }
+    .editor-field input[type="number"] {
+      width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: .3rem .5rem; font-size: .85rem; font-family: inherit;
+    }
     .editor-field input[type="text"]:focus,
     .editor-field input[type="number"]:focus { outline: 2px solid var(--green-mid); outline-offset: -1px; border-color: transparent; }
-    .editor-field input[type="color"] { width: 100%; height: 34px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; padding: 2px 3px; background: var(--white); }
+    .editor-field input[type="color"] {
+      width: 100%; height: 34px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; padding: 2px 3px; background: var(--white);
+    }
     .size-row, .pos-row { display: flex; gap: .4rem; align-items: center; }
     .size-row input, .pos-row input { flex: 1; min-width: 0; }
     .size-row span, .pos-row span { font-size: .78rem; color: var(--grey); white-space: nowrap; }
     .editor-footer { padding: .55rem .85rem; display: flex; gap: .4rem; justify-content: flex-end; border-top: 1px solid #eee; }
     .editor-hint { font-size: .72rem; color: var(--grey); padding: 0 .85rem .6rem; }
 
+    /* Tooltip */
     #map-tooltip { position: fixed; background: rgba(30,30,30,.92); color: #fff; padding: .45rem .7rem; border-radius: 6px; font-size: .82rem; pointer-events: none; z-index: 200; max-width: 220px; line-height: 1.5; display: none; }
 
     @media (max-width: 640px) {
@@ -172,8 +187,9 @@
     <div class="map-toolbar">
       <span class="map-pos-display" id="map-pos-display">Click a bed to edit · Drag to move</span>
       <div class="map-toolbar-right">
+        <button class="tool-btn" id="undo-btn" onclick="undo()" disabled title="Undo last change (drag or edit)">↩ Undo</button>
         <button class="tool-btn" onclick="resetAll()">Reset all</button>
-        <button class="tool-btn tool-btn-primary" onclick="exportJSON()">Export JSON</button>
+        <button class="tool-btn tool-btn-primary" onclick="exportJSON()" title="Download garden-data.json with all changes baked in">Save JSON</button>
       </div>
     </div>
     <div id="map-wrap">
@@ -182,6 +198,8 @@
       </div>
       <div id="map-sidebar">
         <div id="map-legend"></div>
+
+        <!-- Bed editor -->
         <div id="bed-editor">
           <div class="editor-header">
             <strong id="editor-title">Edit Bed</strong>
@@ -221,9 +239,10 @@
             <button class="tool-btn tool-btn-primary" onclick="saveBedEdit()">Save</button>
           </div>
         </div>
-      </div>
-    </div>
-    <p class="map-hint">Drag beds to move · Click to edit name, colour &amp; size · 25 cm snap grid · Auto-saved in browser</p>
+
+      </div><!-- /sidebar -->
+    </div><!-- /map-wrap -->
+    <p class="map-hint">Drag beds to move · Click to edit name, colour &amp; size · 25 cm snap grid · Auto-saved in browser · Use ↩ Undo to revert the last drag or edit · Save JSON to export changes to file</p>
   </section>
 </main>
 
@@ -231,196 +250,428 @@
 
 <script>
   const currentYear = new Date().getFullYear();
-  let gardenData = null, layoutRendered = false;
+  let gardenData    = null;
+  let layoutRendered = false;
 
+  /* ── tab switching ── */
   function show(id, btn) {
     document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
-    if (id === 'layout' && gardenData && !layoutRendered) { renderLayout(gardenData); layoutRendered = true; }
+    if (id === 'layout' && gardenData && !layoutRendered) {
+      renderLayout(gardenData);
+      layoutRendered = true;
+    }
   }
 
+  /* ── storage ── */
   const POS_KEY = 'gardenBedPositions_v1';
   const OV_KEY  = 'gardenBedOverrides_v1';
-  function loadPos() { try { return JSON.parse(localStorage.getItem(POS_KEY)||'{}'); } catch { return {}; } }
-  function savePos(p){ try { localStorage.setItem(POS_KEY,JSON.stringify(p)); } catch {} }
-  function loadOv()  { try { return JSON.parse(localStorage.getItem(OV_KEY) ||'{}'); } catch { return {}; } }
-  function saveOv(o) { try { localStorage.setItem(OV_KEY, JSON.stringify(o)); } catch {} }
 
+  function loadPos() { try { return JSON.parse(localStorage.getItem(POS_KEY) || '{}'); } catch { return {}; } }
+  function savePos(p) { try { localStorage.setItem(POS_KEY, JSON.stringify(p)); } catch {} }
+  function loadOv()  { try { return JSON.parse(localStorage.getItem(OV_KEY)  || '{}'); } catch { return {}; } }
+  function saveOv(o) { try { localStorage.setItem(OV_KEY,  JSON.stringify(o)); } catch {} }
+
+  /* ── reset / export ── */
   function resetAll() {
     if (!confirm('Reset all positions and edits back to defaults?')) return;
-    localStorage.removeItem(POS_KEY); localStorage.removeItem(OV_KEY);
-    closeEditor(); layoutRendered = false;
+    localStorage.removeItem(POS_KEY);
+    localStorage.removeItem(OV_KEY);
+    undoStack = [];
+    refreshUndoBtn();
+    closeEditor();
+    layoutRendered = false;
     if (gardenData) { renderLayout(gardenData); layoutRendered = true; }
   }
 
   function exportJSON() {
     if (!gardenData) return;
-    const pos=loadPos(), ov=loadOv();
-    const copy=JSON.parse(JSON.stringify(gardenData));
+    const pos = loadPos(), ov = loadOv();
+    const copy = JSON.parse(JSON.stringify(gardenData));
     copy.garden.beds.forEach(bed => {
-      const o=ov[bed.id]||{};
-      if (o.name)     bed.name=o.name;
-      if (o.colour)   bed.colour=o.colour;
-      if (o.length_m) bed.length_m=o.length_m;
-      if (o.width_m)  bed.width_m=o.width_m;
-      const p=pos[bed.id]; if (p) bed.position={x_m:p.x_m,y_m:p.y_m};
+      const o = ov[bed.id] || {};
+      if (o.name)     bed.name     = o.name;
+      if (o.colour)   bed.colour   = o.colour;
+      if (o.length_m) bed.length_m = o.length_m;
+      if (o.width_m)  bed.width_m  = o.width_m;
+      const p = pos[bed.id];
+      if (p) bed.position = { x_m: p.x_m, y_m: p.y_m };
     });
-    const blob=new Blob([JSON.stringify(copy,null,2)],{type:'application/json'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='garden-data.json'; a.click();
+    const blob = new Blob([JSON.stringify(copy, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'garden-data.json';
+    a.click();
   }
 
+  /* ── undo history ── */
+  let undoStack = [];
+
+  function pushHistory(state) {
+    undoStack.push(state || {
+      pos: JSON.parse(JSON.stringify(loadPos())),
+      ov:  JSON.parse(JSON.stringify(loadOv()))
+    });
+    if (undoStack.length > 20) undoStack.shift();
+    refreshUndoBtn();
+  }
+
+  function undo() {
+    if (!undoStack.length) return;
+    const prev = undoStack.pop();
+    savePos(prev.pos);
+    saveOv(prev.ov);
+    closeEditor();
+    layoutRendered = false;
+    if (gardenData) { renderLayout(gardenData); layoutRendered = true; }
+    refreshUndoBtn();
+  }
+
+  function refreshUndoBtn() {
+    const btn = document.getElementById('undo-btn');
+    if (btn) btn.disabled = undoStack.length === 0;
+  }
+
+  /* ── editor state ── */
   let editingBedId = null;
 
   function openEditor(bed, resolvedPos, resolvedOv) {
     editingBedId = bed.id;
-    const ov = resolvedOv[bed.id]||{};
-    document.getElementById('editor-title').textContent = 'Edit '+(ov.name||bed.name).split('—')[0].trim();
+    const ov = resolvedOv[bed.id] || {};
+    document.getElementById('editor-title').textContent = 'Edit ' + (ov.name || bed.name).split('—')[0].trim();
     document.getElementById('edit-name').value   = ov.name    ?? bed.name;
     document.getElementById('edit-colour').value = ov.colour  ?? '#8d6e63';
     document.getElementById('edit-length').value = ov.length_m ?? bed.length_m;
     document.getElementById('edit-width').value  = ov.width_m  ?? bed.width_m;
-    const p = resolvedPos[bed.id]||bed.position||{x_m:0,y_m:0};
+    const p = resolvedPos[bed.id] || bed.position || { x_m: 0, y_m: 0 };
     document.getElementById('edit-x').value = (+p.x_m).toFixed(2);
     document.getElementById('edit-y').value = (+p.y_m).toFixed(2);
-    document.getElementById('bed-editor').style.display='block';
+    document.getElementById('bed-editor').style.display = 'block';
   }
 
   function closeEditor() {
     editingBedId = null;
-    document.getElementById('bed-editor').style.display='none';
-    document.querySelectorAll('.sel-rect').forEach(e => e.setAttribute('opacity',0));
+    document.getElementById('bed-editor').style.display = 'none';
+    // remove selection highlight
+    document.querySelectorAll('.bed-selected').forEach(el => el.classList.remove('bed-selected'));
   }
 
   function saveBedEdit() {
-    if (!editingBedId||!gardenData) return;
-    const ov=loadOv();
-    ov[editingBedId]={ name:document.getElementById('edit-name').value.trim(), colour:document.getElementById('edit-colour').value, length_m:parseFloat(document.getElementById('edit-length').value), width_m:parseFloat(document.getElementById('edit-width').value) };
+    if (!editingBedId || !gardenData) return;
+    pushHistory();
+    const ov = loadOv();
+    ov[editingBedId] = {
+      name:     document.getElementById('edit-name').value.trim(),
+      colour:   document.getElementById('edit-colour').value,
+      length_m: parseFloat(document.getElementById('edit-length').value),
+      width_m:  parseFloat(document.getElementById('edit-width').value),
+    };
     saveOv(ov);
-    const pos=loadPos();
-    pos[editingBedId]={ x_m:parseFloat(document.getElementById('edit-x').value), y_m:parseFloat(document.getElementById('edit-y').value) };
+    const pos = loadPos();
+    pos[editingBedId] = {
+      x_m: parseFloat(document.getElementById('edit-x').value),
+      y_m: parseFloat(document.getElementById('edit-y').value),
+    };
     savePos(pos);
     closeEditor();
-    layoutRendered=false; renderLayout(gardenData); layoutRendered=true;
+    layoutRendered = false;
+    renderLayout(gardenData);
+    layoutRendered = true;
   }
 
+  /* ── map renderer ── */
   function renderLayout(data) {
-    const SCALE=80, MARGIN=58, SNAP=0.25, CW=12, CH=9;
-    const NS='http://www.w3.org/2000/svg';
-    const PALETTE=['#e53935','#558b2f','#ef6c00','#6a1b9a','#0097a7','#f9a825','#1565c0','#6d4c41'];
-    const PLANT_COLORS={};
-    data.plants.forEach((p,i)=>{ PLANT_COLORS[p.id]=PALETTE[i%PALETTE.length]; });
-    const STATUS_OPACITY={planned:.35,sown:.6,growing:1,harvesting:1,harvested:.5,failed:.2};
-    const plantMap=Object.fromEntries(data.plants.map(p=>[p.id,p]));
-    const savedPos=loadPos(), ov=loadOv();
-    const pos={};
-    data.garden.beds.forEach(b=>{ const def=b.position||{x_m:0,y_m:0}; pos[b.id]=savedPos[b.id]?{...savedPos[b.id]}:{...def}; });
-    const svgW=CW*SCALE+MARGIN*2, svgH=CH*SCALE+MARGIN*2+28;
-    function el(tag,attrs){ const e=document.createElementNS(NS,tag); Object.entries(attrs||{}).forEach(([k,v])=>e.setAttribute(k,v)); return e; }
-    function txt(tag,attrs,c){ const e=el(tag,attrs); e.textContent=c; return e; }
-    const svg=document.getElementById('garden-svg');
-    svg.setAttribute('width',svgW); svg.setAttribute('height',svgH); svg.setAttribute('viewBox',`0 0 ${svgW} ${svgH}`); svg.innerHTML='';
-    const defs=el('defs'); const pat=el('pattern',{id:'hatch',width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'});
-    pat.appendChild(el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'rgba(255,255,255,.55)','stroke-width':2})); defs.appendChild(pat); svg.appendChild(defs);
-    svg.appendChild(el('rect',{width:svgW,height:svgH,fill:'#a5d6a7'}));
-    svg.appendChild(el('rect',{x:MARGIN-14,y:MARGIN-14,width:CW*SCALE+28,height:CH*SCALE+28,fill:'#d7ccc8',rx:10}));
-    for(let gx=0;gx<=CW;gx+=.5){ const x=MARGIN+gx*SCALE,major=Number.isInteger(gx); svg.appendChild(el('line',{x1:x,y1:MARGIN-14,x2:x,y2:MARGIN+CH*SCALE+14,stroke:major?'rgba(0,0,0,.12)':'rgba(0,0,0,.055)','stroke-width':major?1:.5})); }
-    for(let gy=0;gy<=CH;gy+=.5){ const y=MARGIN+gy*SCALE,major=Number.isInteger(gy); svg.appendChild(el('line',{x1:MARGIN-14,y1:y,x2:MARGIN+CW*SCALE+14,y2:y,stroke:major?'rgba(0,0,0,.12)':'rgba(0,0,0,.055)','stroke-width':major?1:.5})); }
-    for(let gx=0;gx<=CW;gx++) svg.appendChild(txt('text',{x:MARGIN+gx*SCALE,y:MARGIN-20,'text-anchor':'middle',fill:'#777','font-size':9,'font-family':'sans-serif'},gx+'m'));
-    for(let gy=0;gy<=CH;gy++) svg.appendChild(txt('text',{x:MARGIN-20,y:MARGIN+gy*SCALE+1,'text-anchor':'middle','dominant-baseline':'middle',fill:'#777','font-size':9,'font-family':'sans-serif'},gy+'m'));
-    const nx=svgW-26,ny=26;
-    svg.appendChild(el('polygon',{points:`${nx},${ny-11} ${nx-5},${ny+3} ${nx+5},${ny+3}`,fill:'#2d5a27'}));
-    svg.appendChild(txt('text',{x:nx,y:ny+16,'text-anchor':'middle',fill:'#2d5a27','font-size':10,'font-weight':'bold','font-family':'sans-serif'},'N'));
-    const sx=MARGIN,sy=svgH-14;
-    svg.appendChild(el('line',{x1:sx,y1:sy,x2:sx+SCALE,y2:sy,stroke:'#555','stroke-width':2}));
-    svg.appendChild(el('line',{x1:sx,y1:sy-4,x2:sx,y2:sy+4,stroke:'#555','stroke-width':2}));
-    svg.appendChild(el('line',{x1:sx+SCALE,y1:sy-4,x2:sx+SCALE,y2:sy+4,stroke:'#555','stroke-width':2}));
-    svg.appendChild(txt('text',{x:sx+SCALE/2,y:sy-7,'text-anchor':'middle',fill:'#555','font-size':10,'font-family':'sans-serif'},'1 m'));
-    const tooltip=document.getElementById('map-tooltip'), posLabel=document.getElementById('map-pos-display');
-    let isDraggingAny=false;
-    function svgCoord(e){ const pt=svg.createSVGPoint(); const src=e.touches?e.touches[0]:e; pt.x=src.clientX; pt.y=src.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
-    function clamp(v,mn,mx){ return Math.max(mn,Math.min(mx,v)); }
-    function snapV(v){ return Math.round(v/SNAP)*SNAP; }
-    data.garden.beds.forEach(bed=>{
-      const bedOv=ov[bed.id]||{};
-      const name=bedOv.name||bed.name, colour=bedOv.colour||'#8d6e63';
-      const lm=bedOv.length_m||bed.length_m, wm=bedOv.width_m||bed.width_m;
-      const bw=lm*SCALE, bh=wm*SCALE, bedPos=pos[bed.id];
-      const g=el('g',{cursor:'grab','data-bed-id':bed.id});
-      g.setAttribute('transform',`translate(${MARGIN+bedPos.x_m*SCALE},${MARGIN+bedPos.y_m*SCALE})`);
-      g.appendChild(el('rect',{x:3,y:3,width:bw,height:bh,fill:'rgba(0,0,0,.18)',rx:4,'pointer-events':'none'}));
-      g.appendChild(el('rect',{x:0,y:0,width:bw,height:bh,fill:colour,rx:4}));
-      const plantings=bed.plantings||[];
-      if(plantings.length>0){
-        const zW=bw/plantings.length;
-        plantings.forEach((pl,i)=>{
-          const pc=PLANT_COLORS[pl.plant_id]||'#9e9e9e', op=STATUS_OPACITY[pl.status]??1, zx=i*zW;
-          g.appendChild(el('rect',{x:zx,y:0,width:zW,height:bh,fill:pc,opacity:op}));
-          if(pl.status==='planned') g.appendChild(el('rect',{x:zx,y:0,width:zW,height:bh,fill:'url(#hatch)'}));
-          if(zW>30){
-            const plant=plantMap[pl.plant_id], pname=plant?plant.name.split(' ')[0]:pl.plant_id, fs=clamp(zW/7,9,12);
-            g.appendChild(txt('text',{x:zx+zW/2,y:bh/2-(bh>48?7:0),'text-anchor':'middle','dominant-baseline':'middle',fill:'#fff','font-size':fs,'font-weight':'bold','font-family':'sans-serif','paint-order':'stroke',stroke:'rgba(0,0,0,.3)','stroke-width':2,'pointer-events':'none'},pname));
-            if(bh>48) g.appendChild(txt('text',{x:zx+zW/2,y:bh/2+8,'text-anchor':'middle','dominant-baseline':'middle',fill:'rgba(255,255,255,.88)','font-size':clamp(fs-2,8,10),'font-family':'sans-serif','pointer-events':'none'},pl.status));
+    const SCALE  = 80;
+    const MARGIN = 58;
+    const SNAP   = 0.25;
+    const CW = 12, CH = 9;
+    const NS = 'http://www.w3.org/2000/svg';
+
+    const PALETTE = ['#e53935','#558b2f','#ef6c00','#6a1b9a','#0097a7','#f9a825','#1565c0','#6d4c41'];
+    const PLANT_COLORS = {};
+    data.plants.forEach((p, i) => { PLANT_COLORS[p.id] = PALETTE[i % PALETTE.length]; });
+
+    const STATUS_OPACITY = { planned:.35, sown:.6, growing:1, harvesting:1, harvested:.5, failed:.2 };
+    const plantMap = Object.fromEntries(data.plants.map(p => [p.id, p]));
+
+    // Resolve positions and overrides
+    const savedPos = loadPos();
+    const ov = loadOv();
+    const pos = {};
+    data.garden.beds.forEach(b => {
+      const def = b.position || { x_m: 0, y_m: 0 };
+      pos[b.id] = savedPos[b.id] ? { ...savedPos[b.id] } : { ...def };
+    });
+
+    const svgW = CW * SCALE + MARGIN * 2;
+    const svgH = CH * SCALE + MARGIN * 2 + 28;
+
+    function el(tag, attrs) {
+      const e = document.createElementNS(NS, tag);
+      Object.entries(attrs || {}).forEach(([k, v]) => e.setAttribute(k, v));
+      return e;
+    }
+    function txt(tag, attrs, content) { const e = el(tag, attrs); e.textContent = content; return e; }
+
+    const svg = document.getElementById('garden-svg');
+    svg.setAttribute('width',   svgW);
+    svg.setAttribute('height',  svgH);
+    svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+    svg.innerHTML = '';
+
+    // Defs
+    const defs = el('defs');
+    const pat = el('pattern', { id:'hatch', width:6, height:6, patternUnits:'userSpaceOnUse', patternTransform:'rotate(45)' });
+    pat.appendChild(el('line', { x1:0,y1:0,x2:0,y2:6, stroke:'rgba(255,255,255,.55)', 'stroke-width':2 }));
+    defs.appendChild(pat); svg.appendChild(defs);
+
+    // Background
+    svg.appendChild(el('rect', { width:svgW, height:svgH, fill:'#a5d6a7' }));
+    svg.appendChild(el('rect', { x:MARGIN-14, y:MARGIN-14, width:CW*SCALE+28, height:CH*SCALE+28, fill:'#d7ccc8', rx:10 }));
+
+    // Grid
+    for (let gx = 0; gx <= CW; gx += .5) {
+      const x = MARGIN + gx*SCALE, major = Number.isInteger(gx);
+      svg.appendChild(el('line', { x1:x,y1:MARGIN-14,x2:x,y2:MARGIN+CH*SCALE+14, stroke:major?'rgba(0,0,0,.12)':'rgba(0,0,0,.055)', 'stroke-width':major?1:.5 }));
+    }
+    for (let gy = 0; gy <= CH; gy += .5) {
+      const y = MARGIN + gy*SCALE, major = Number.isInteger(gy);
+      svg.appendChild(el('line', { x1:MARGIN-14,y1:y,x2:MARGIN+CW*SCALE+14,y2:y, stroke:major?'rgba(0,0,0,.12)':'rgba(0,0,0,.055)', 'stroke-width':major?1:.5 }));
+    }
+    for (let gx = 0; gx <= CW; gx++) svg.appendChild(txt('text', { x:MARGIN+gx*SCALE, y:MARGIN-20,'text-anchor':'middle',fill:'#777','font-size':9,'font-family':'sans-serif' }, gx+'m'));
+    for (let gy = 0; gy <= CH; gy++) svg.appendChild(txt('text', { x:MARGIN-20, y:MARGIN+gy*SCALE+1,'text-anchor':'middle','dominant-baseline':'middle',fill:'#777','font-size':9,'font-family':'sans-serif' }, gy+'m'));
+
+    // North
+    const nx=svgW-26, ny=26;
+    svg.appendChild(el('polygon', { points:`${nx},${ny-11} ${nx-5},${ny+3} ${nx+5},${ny+3}`, fill:'#2d5a27' }));
+    svg.appendChild(txt('text', { x:nx,y:ny+16,'text-anchor':'middle',fill:'#2d5a27','font-size':10,'font-weight':'bold','font-family':'sans-serif' }, 'N'));
+
+    // Scale bar
+    const sx=MARGIN, sy=svgH-14;
+    svg.appendChild(el('line', { x1:sx,y1:sy,x2:sx+SCALE,y2:sy,stroke:'#555','stroke-width':2 }));
+    svg.appendChild(el('line', { x1:sx,y1:sy-4,x2:sx,y2:sy+4,stroke:'#555','stroke-width':2 }));
+    svg.appendChild(el('line', { x1:sx+SCALE,y1:sy-4,x2:sx+SCALE,y2:sy+4,stroke:'#555','stroke-width':2 }));
+    svg.appendChild(txt('text', { x:sx+SCALE/2,y:sy-7,'text-anchor':'middle',fill:'#555','font-size':10,'font-family':'sans-serif' }, '1 m'));
+
+    const tooltip  = document.getElementById('map-tooltip');
+    const posLabel = document.getElementById('map-pos-display');
+    let isDraggingAny = false;
+
+    function svgCoord(e) {
+      const pt = svg.createSVGPoint();
+      const src = e.touches ? e.touches[0] : e;
+      pt.x = src.clientX; pt.y = src.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function clamp(v, mn, mx) { return Math.max(mn, Math.min(mx, v)); }
+    function snapV(v) { return Math.round(v / SNAP) * SNAP; }
+
+    data.garden.beds.forEach(bed => {
+      // Apply overrides to bed properties
+      const bedOv  = ov[bed.id] || {};
+      const name   = bedOv.name    || bed.name;
+      const colour = bedOv.colour  || '#8d6e63';
+      const lm     = bedOv.length_m || bed.length_m;
+      const wm     = bedOv.width_m  || bed.width_m;
+      const bw = lm * SCALE;
+      const bh = wm * SCALE;
+      const bedPos = pos[bed.id];
+
+      // Lighter version of colour for empty-bed fill
+      const g = el('g', { cursor:'grab', 'data-bed-id': bed.id });
+      g.setAttribute('transform', `translate(${MARGIN + bedPos.x_m*SCALE},${MARGIN + bedPos.y_m*SCALE})`);
+
+      // Shadow
+      g.appendChild(el('rect', { x:3,y:3,width:bw,height:bh, fill:'rgba(0,0,0,.18)', rx:4, 'pointer-events':'none' }));
+      // Soil / bed base colour
+      g.appendChild(el('rect', { x:0,y:0,width:bw,height:bh, fill:colour, rx:4 }));
+
+      // Planting zones
+      const plantings = bed.plantings || [];
+      if (plantings.length > 0) {
+        const zW = bw / plantings.length;
+        plantings.forEach((pl, i) => {
+          const pcolour  = PLANT_COLORS[pl.plant_id] || '#9e9e9e';
+          const opacity  = STATUS_OPACITY[pl.status] ?? 1;
+          const zx = i * zW;
+          g.appendChild(el('rect', { x:zx,y:0,width:zW,height:bh, fill:pcolour, opacity }));
+          if (pl.status === 'planned') g.appendChild(el('rect', { x:zx,y:0,width:zW,height:bh, fill:'url(#hatch)' }));
+          if (zW > 30) {
+            const plant = plantMap[pl.plant_id];
+            const pname = plant ? plant.name.split(' ')[0] : pl.plant_id;
+            const fs = clamp(zW/7, 9, 12);
+            g.appendChild(txt('text', { x:zx+zW/2, y:bh/2-(bh>48?7:0), 'text-anchor':'middle','dominant-baseline':'middle', fill:'#fff','font-size':fs,'font-weight':'bold','font-family':'sans-serif','paint-order':'stroke',stroke:'rgba(0,0,0,.3)','stroke-width':2,'pointer-events':'none' }, pname));
+            if (bh > 48) g.appendChild(txt('text', { x:zx+zW/2,y:bh/2+8,'text-anchor':'middle','dominant-baseline':'middle',fill:'rgba(255,255,255,.88)','font-size':clamp(fs-2,8,10),'font-family':'sans-serif','pointer-events':'none' }, pl.status));
           }
-          if(i>0) g.appendChild(el('line',{x1:zx,y1:0,x2:zx,y2:bh,stroke:'rgba(0,0,0,.2)','stroke-width':1,'stroke-dasharray':'3,2'}));
-          const hit=el('rect',{x:zx,y:0,width:zW,height:bh,fill:'transparent'});
-          hit.addEventListener('mouseenter',()=>{ if(isDraggingAny) return; const plant=plantMap[pl.plant_id]; tooltip.innerHTML=`<strong>${plant?plant.name:pl.plant_id}</strong><br>Status: <em>${pl.status}</em><br>Qty: ${pl.quantity_plants??'?'} plants${pl.sown_date?'<br>Sown: '+pl.sown_date:''}${pl.expected_harvest_date?'<br>Harvest: '+pl.expected_harvest_date:''}${pl.notes?'<br><span style="opacity:.8">'+pl.notes+'</span>':''}`; tooltip.style.display='block'; });
-          hit.addEventListener('mousemove',e=>{ if(!isDraggingAny){ tooltip.style.left=(e.clientX+14)+'px'; tooltip.style.top=(e.clientY-10)+'px'; } });
-          hit.addEventListener('mouseleave',()=>{ tooltip.style.display='none'; });
+          if (i > 0) g.appendChild(el('line', { x1:zx,y1:0,x2:zx,y2:bh, stroke:'rgba(0,0,0,.2)','stroke-width':1,'stroke-dasharray':'3,2' }));
+
+          // Tooltip hit
+          const hit = el('rect', { x:zx,y:0,width:zW,height:bh, fill:'transparent' });
+          hit.addEventListener('mouseenter', () => {
+            if (isDraggingAny) return;
+            const plant = plantMap[pl.plant_id];
+            tooltip.innerHTML = `<strong>${plant?plant.name:pl.plant_id}</strong><br>Status: <em>${pl.status}</em><br>Qty: ${pl.quantity_plants??'?'} plants${pl.sown_date?'<br>Sown: '+pl.sown_date:''}${pl.expected_harvest_date?'<br>Harvest: '+pl.expected_harvest_date:''}${pl.notes?'<br><span style="opacity:.8">'+pl.notes+'</span>':''}`;
+            tooltip.style.display = 'block';
+          });
+          hit.addEventListener('mousemove', e => { if (!isDraggingAny) { tooltip.style.left=(e.clientX+14)+'px'; tooltip.style.top=(e.clientY-10)+'px'; } });
+          hit.addEventListener('mouseleave', () => { tooltip.style.display='none'; });
           g.appendChild(hit);
         });
       }
-      g.appendChild(el('rect',{x:0,y:0,width:bw,height:bh,fill:'none',stroke:colour,'stroke-width':2.5,rx:4}));
-      const selRect=el('rect',{x:-3,y:-3,width:bw+6,height:bh+6,fill:'none',stroke:'#fff','stroke-width':2.5,rx:6,'stroke-dasharray':'5,3',opacity:0,'pointer-events':'none','class':'sel-rect'});
+
+      // Border — use custom colour (darkened) for stroke
+      g.appendChild(el('rect', { x:0,y:0,width:bw,height:bh, fill:'none', stroke:colour, 'stroke-width':2.5, rx:4 }));
+      // Selection highlight rect (hidden by default)
+      const selRect = el('rect', { x:-3,y:-3,width:bw+6,height:bh+6, fill:'none', stroke:'#fff', 'stroke-width':2.5, rx:6, 'stroke-dasharray':'5,3', opacity:0, 'pointer-events':'none', 'class':'sel-rect' });
       g.appendChild(selRect);
-      const shortName=name.split('—')[0].trim();
-      g.appendChild(txt('text',{x:bw/2,y:-8,'text-anchor':'middle',fill:'#3e2723','font-size':11,'font-weight':'bold','font-family':'sans-serif','pointer-events':'none'},`${shortName} (${lm}×${wm} m)`));
+
+      // Label
+      const shortName = name.split('—')[0].trim();
+      g.appendChild(txt('text', { x:bw/2,y:-8,'text-anchor':'middle',fill:'#3e2723','font-size':11,'font-weight':'bold','font-family':'sans-serif','pointer-events':'none' }, `${shortName} (${lm}×${wm} m)`));
+
       svg.appendChild(g);
-      let dragging=false,dragMoved=false,originSVG={x:0,y:0},originPos={x:0,y:0},startClient={x:0,y:0};
-      function startDrag(e){ e.preventDefault(); dragging=true; dragMoved=false; isDraggingAny=true; tooltip.style.display='none'; const src=e.touches?e.touches[0]:e; startClient={x:src.clientX,y:src.clientY}; const p=svgCoord(e); originSVG={x:p.x,y:p.y}; originPos={...pos[bed.id]}; g.setAttribute('cursor','grabbing'); svg.appendChild(g); }
-      function moveDrag(e){ if(!dragging) return; const src=e.touches?e.touches[0]:e; if(Math.hypot(src.clientX-startClient.x,src.clientY-startClient.y)>4) dragMoved=true; if(!dragMoved) return; const p=svgCoord(e); const dx=(p.x-originSVG.x)/SCALE,dy=(p.y-originSVG.y)/SCALE; const nx=clamp(originPos.x_m+dx,0,CW-lm),ny=clamp(originPos.y_m+dy,0,CH-wm); pos[bed.id].x_m=nx; pos[bed.id].y_m=ny; g.setAttribute('transform',`translate(${MARGIN+nx*SCALE},${MARGIN+ny*SCALE})`); posLabel.textContent=`${shortName} → (${nx.toFixed(2)} m, ${ny.toFixed(2)} m)`; if(editingBedId===bed.id){ document.getElementById('edit-x').value=nx.toFixed(2); document.getElementById('edit-y').value=ny.toFixed(2); } }
-      function endDrag(){ if(!dragging) return; dragging=false; isDraggingAny=false; g.setAttribute('cursor','grab'); if(!dragMoved){ openEditor(bed,pos,ov); selRect.setAttribute('opacity',1); posLabel.textContent=`Editing ${shortName}`; return; } const fx=clamp(snapV(pos[bed.id].x_m),0,CW-lm),fy=clamp(snapV(pos[bed.id].y_m),0,CH-wm); pos[bed.id].x_m=fx; pos[bed.id].y_m=fy; g.setAttribute('transform',`translate(${MARGIN+fx*SCALE},${MARGIN+fy*SCALE})`); savePos(pos); posLabel.textContent=`${shortName} placed at (${fx} m, ${fy} m) ✓`; if(editingBedId===bed.id){ document.getElementById('edit-x').value=fx.toFixed(2); document.getElementById('edit-y').value=fy.toFixed(2); } }
-      g.addEventListener('mousedown',startDrag); g.addEventListener('touchstart',startDrag,{passive:false});
-      window.addEventListener('mousemove',moveDrag); window.addEventListener('touchmove',moveDrag,{passive:false});
-      window.addEventListener('mouseup',endDrag); window.addEventListener('touchend',endDrag);
+
+      /* ── drag + click ── */
+      let dragging   = false;
+      let dragMoved  = false;
+      let originSVG  = { x:0, y:0 };
+      let originPos  = { x:0, y:0 };
+      let startClient = { x:0, y:0 };
+
+      function startDrag(e) {
+        e.preventDefault();
+        dragging = true; dragMoved = false; isDraggingAny = true;
+        tooltip.style.display = 'none';
+        const src = e.touches ? e.touches[0] : e;
+        startClient = { x:src.clientX, y:src.clientY };
+        const p = svgCoord(e);
+        originSVG = { x:p.x, y:p.y };
+        originPos = { ...pos[bed.id] };
+        g.setAttribute('cursor','grabbing');
+        svg.appendChild(g); // bring to front
+      }
+
+      function moveDrag(e) {
+        if (!dragging) return;
+        const src = e.touches ? e.touches[0] : e;
+        if (Math.hypot(src.clientX-startClient.x, src.clientY-startClient.y) > 4) dragMoved = true;
+        if (!dragMoved) return;
+        const p = svgCoord(e);
+        const dx = (p.x - originSVG.x)/SCALE, dy = (p.y - originSVG.y)/SCALE;
+        const nx = clamp(originPos.x_m+dx, 0, CW-lm);
+        const ny = clamp(originPos.y_m+dy, 0, CH-wm);
+        pos[bed.id].x_m = nx; pos[bed.id].y_m = ny;
+        g.setAttribute('transform', `translate(${MARGIN+nx*SCALE},${MARGIN+ny*SCALE})`);
+        posLabel.textContent = `${shortName} → (${nx.toFixed(2)} m, ${ny.toFixed(2)} m)`;
+        // sync editor if open
+        if (editingBedId === bed.id) {
+          document.getElementById('edit-x').value = nx.toFixed(2);
+          document.getElementById('edit-y').value = ny.toFixed(2);
+        }
+      }
+
+      function endDrag(e) {
+        if (!dragging) return;
+        dragging = false; isDraggingAny = false;
+        g.setAttribute('cursor','grab');
+
+        if (!dragMoved) {
+          // treat as click → open editor
+          openEditor(bed, pos, ov);
+          // highlight selection
+          selRect.setAttribute('opacity', 1);
+          posLabel.textContent = `Editing ${shortName}`;
+          return;
+        }
+
+        // push pre-drag state for undo (bed's pre-drag position via originPos)
+        const prevPosSnap = loadPos();
+        prevPosSnap[bed.id] = { ...originPos };
+        pushHistory({ pos: prevPosSnap, ov: JSON.parse(JSON.stringify(ov)) });
+
+        // snap on drop
+        const fx = clamp(snapV(pos[bed.id].x_m), 0, CW-lm);
+        const fy = clamp(snapV(pos[bed.id].y_m), 0, CH-wm);
+        pos[bed.id].x_m = fx; pos[bed.id].y_m = fy;
+        g.setAttribute('transform', `translate(${MARGIN+fx*SCALE},${MARGIN+fy*SCALE})`);
+        savePos(pos);
+        posLabel.textContent = `${shortName} placed at (${fx} m, ${fy} m) ✓`;
+        if (editingBedId === bed.id) {
+          document.getElementById('edit-x').value = fx.toFixed(2);
+          document.getElementById('edit-y').value = fy.toFixed(2);
+        }
+      }
+
+      g.addEventListener('mousedown',  startDrag);
+      g.addEventListener('touchstart', startDrag, { passive:false });
+      window.addEventListener('mousemove', moveDrag);
+      window.addEventListener('touchmove', moveDrag, { passive:false });
+      window.addEventListener('mouseup',   endDrag);
+      window.addEventListener('touchend',  endDrag);
     });
-    const legend=document.getElementById('map-legend');
-    const usedPlants=data.plants.filter(p=>data.garden.beds.some(b=>b.plantings&&b.plantings.some(pl=>pl.plant_id===p.id)));
-    legend.innerHTML=`<div class="legend-title">Plants</div>`+usedPlants.map(p=>`<div class="legend-item"><div class="legend-swatch" style="background:${PLANT_COLORS[p.id]}"></div>${p.name}</div>`).join('')+`<div class="legend-title" style="margin-top:.75rem">Status</div>`+[['Planned','35%'],['Sown','60%'],['Growing','100%'],['Harvesting','100%'],['Harvested','50%']].map(([s,o])=>`<div class="legend-item"><div class="legend-swatch" style="background:#666;opacity:${o}"></div>${s}</div>`).join('');
+
+    /* ── legend ── */
+    const legend = document.getElementById('map-legend');
+    const usedPlants = data.plants.filter(p => data.garden.beds.some(b => b.plantings && b.plantings.some(pl => pl.plant_id===p.id)));
+    legend.innerHTML =
+      `<div class="legend-title">Plants</div>` +
+      usedPlants.map(p => `<div class="legend-item"><div class="legend-swatch" style="background:${PLANT_COLORS[p.id]}"></div>${p.name}</div>`).join('') +
+      `<div class="legend-title" style="margin-top:.75rem">Status</div>` +
+      [['Planned','35%'],['Sown','60%'],['Growing','100%'],['Harvesting','100%'],['Harvested','50%']].map(([s,o]) =>
+        `<div class="legend-item"><div class="legend-swatch" style="background:#666;opacity:${o}"></div>${s}</div>`
+      ).join('');
   }
 
-  function sunlightLabel(v){ return {full_sun:'☀️ Full sun',partial_shade:'⛅ Partial shade',full_shade:'🌥️ Full shade'}[v]||v; }
-  function sowingInfo(p){ if(!p.sowing) return '—'; const parts=[]; if(p.sowing.indoors_weeks_before_last_frost) parts.push(`Start indoors ${p.sowing.indoors_weeks_before_last_frost} wks before last frost`); if(p.sowing.direct_sow) parts.push('Direct sow OK'); return parts.join(' · ')||'—'; }
-  function dash(d){ return d||'—'; }
+  /* ── shared helpers ── */
+  function sunlightLabel(v) { return {full_sun:'☀️ Full sun',partial_shade:'⛅ Partial shade',full_shade:'🌥️ Full shade'}[v]||v; }
+  function sowingInfo(p) {
+    if (!p.sowing) return '—';
+    const parts=[];
+    if (p.sowing.indoors_weeks_before_last_frost) parts.push(`Start indoors ${p.sowing.indoors_weeks_before_last_frost} wks before last frost`);
+    if (p.sowing.direct_sow) parts.push('Direct sow OK');
+    return parts.join(' · ')||'—';
+  }
+  function dash(d) { return d||'—'; }
 
-  fetch('garden-data.json').then(r=>r.json()).then(data=>{
-    gardenData=data;
-    const plantMap=Object.fromEntries(data.plants.map(p=>[p.id,p]));
-    const plantCards=document.getElementById('plant-cards');
-    data.plants.forEach(p=>{
-      const harvest=p.harvest?`${p.harvest.days_to_maturity_min}–${p.harvest.days_to_maturity_max} days`:'—';
-      const germ=p.sowing?`${p.sowing.germination_days_min}–${p.sowing.germination_days_max} days`:'—';
-      const spacing=`${p.spacing.plant_spacing_cm} cm apart · ${p.spacing.row_spacing_cm} cm rows`;
-      const depth=p.sowing?`${p.sowing.seed_depth_cm} cm`:'—';
-      plantCards.innerHTML+=`<div class="card"><span class="badge ${p.category}">${p.category}</span><h3>${p.name}</h3><p class="latin">${p.latin_name}</p><div class="detail-row"><span class="label">Sowing</span><span class="value">${sowingInfo(p)}</span></div><div class="detail-row"><span class="label">Seed depth</span><span class="value">${depth}</span></div><div class="detail-row"><span class="label">Germination</span><span class="value">${germ}</span></div><div class="detail-row"><span class="label">Days to harvest</span><span class="value">${harvest}</span></div><div class="detail-row"><span class="label">Spacing</span><span class="value">${spacing}</span></div><div class="detail-row"><span class="label">Sunlight</span><span class="value">${sunlightLabel(p.care.sunlight)}</span></div><div class="detail-row"><span class="label">Watering</span><span class="value">${p.care.watering}</span></div>${p.care.notes?`<div class="notes-box">${p.care.notes}</div>`:''}</div>`;
-    });
-    const bedList=document.getElementById('bed-list');
-    data.garden.beds.forEach(bed=>{
-      const area=(bed.length_m*bed.width_m).toFixed(1);
-      let ph='<p class="no-plantings">No plantings recorded.</p>';
-      if(bed.plantings&&bed.plantings.length>0){
-        const rows=bed.plantings.map(pl=>{ const plant=plantMap[pl.plant_id]; return `<tr><td>${plant?plant.name:pl.plant_id}</td><td><span class="status ${pl.status}">${pl.status}</span></td><td>${dash(pl.sown_date)}</td><td>${dash(pl.transplant_date)}</td><td>${dash(pl.expected_harvest_date)}</td><td>${pl.quantity_plants??'—'}</td><td>${pl.notes||''}</td></tr>`; }).join('');
-        ph=`<table class="plantings-table"><thead><tr><th>Plant</th><th>Status</th><th>Sown</th><th>Transplanted</th><th>Expected harvest</th><th>Plants</th><th>Notes</th></tr></thead><tbody>${rows}</tbody></table>`;
-      }
-      bedList.innerHTML+=`<div class="bed-card"><div class="bed-header"><h3>${bed.name}</h3><span class="bed-dims">${bed.length_m} m × ${bed.width_m} m (${area} m²)</span></div><div class="bed-body">${bed.notes?`<p class="bed-notes">${bed.notes}</p>`:''}${ph}</div></div>`;
-    });
-    const seedRows=document.getElementById('seed-rows');
-    data.seeds.forEach(s=>{
-      const plant=plantMap[s.plant_id],expiring=s.expiry_year<=currentYear+1;
-      seedRows.innerHTML+=`<tr><td>${plant?plant.name:s.plant_id}</td><td><strong>${s.variety}</strong></td><td>${s.supplier}</td><td>${s.purchase_date}</td><td class="${expiring?'expiry-warn':''}">${s.expiry_year}</td><td>${s.quantity_seeds}</td><td>${s.notes||''}</td></tr>`;
-    });
-  }).catch(err=>{ document.querySelector('main').innerHTML=`<p style="color:red">Could not load garden-data.json: ${err.message}</p>`; });
+  /* ── data load ── */
+  fetch('garden-data.json')
+    .then(r => r.json())
+    .then(data => {
+      gardenData = data;
+      const plantMap = Object.fromEntries(data.plants.map(p => [p.id, p]));
+
+      // Plants
+      const plantCards = document.getElementById('plant-cards');
+      data.plants.forEach(p => {
+        const harvest = p.harvest?`${p.harvest.days_to_maturity_min}–${p.harvest.days_to_maturity_max} days`:'—';
+        const germ    = p.sowing ?`${p.sowing.germination_days_min}–${p.sowing.germination_days_max} days`:'—';
+        const spacing = `${p.spacing.plant_spacing_cm} cm apart · ${p.spacing.row_spacing_cm} cm rows`;
+        const depth   = p.sowing ?`${p.sowing.seed_depth_cm} cm`:'—';
+        plantCards.innerHTML += `<div class="card"><span class="badge ${p.category}">${p.category}</span><h3>${p.name}</h3><p class="latin">${p.latin_name}</p><div class="detail-row"><span class="label">Sowing</span><span class="value">${sowingInfo(p)}</span></div><div class="detail-row"><span class="label">Seed depth</span><span class="value">${depth}</span></div><div class="detail-row"><span class="label">Germination</span><span class="value">${germ}</span></div><div class="detail-row"><span class="label">Days to harvest</span><span class="value">${harvest}</span></div><div class="detail-row"><span class="label">Spacing</span><span class="value">${spacing}</span></div><div class="detail-row"><span class="label">Sunlight</span><span class="value">${sunlightLabel(p.care.sunlight)}</span></div><div class="detail-row"><span class="label">Watering</span><span class="value">${p.care.watering}</span></div>${p.care.notes?`<div class="notes-box">${p.care.notes}</div>`:''}</div>`;
+      });
+
+      // Beds list
+      const bedList = document.getElementById('bed-list');
+      data.garden.beds.forEach(bed => {
+        const area = (bed.length_m*bed.width_m).toFixed(1);
+        let ph = '<p class="no-plantings">No plantings recorded.</p>';
+        if (bed.plantings && bed.plantings.length > 0) {
+          const rows = bed.plantings.map(pl => { const plant=plantMap[pl.plant_id]; return `<tr><td>${plant?plant.name:pl.plant_id}</td><td><span class="status ${pl.status}">${pl.status}</span></td><td>${dash(pl.sown_date)}</td><td>${dash(pl.transplant_date)}</td><td>${dash(pl.expected_harvest_date)}</td><td>${pl.quantity_plants??'—'}</td><td>${pl.notes||''}</td></tr>`; }).join('');
+          ph = `<table class="plantings-table"><thead><tr><th>Plant</th><th>Status</th><th>Sown</th><th>Transplanted</th><th>Expected harvest</th><th>Plants</th><th>Notes</th></tr></thead><tbody>${rows}</tbody></table>`;
+        }
+        bedList.innerHTML += `<div class="bed-card"><div class="bed-header"><h3>${bed.name}</h3><span class="bed-dims">${bed.length_m} m × ${bed.width_m} m (${area} m²)</span></div><div class="bed-body">${bed.notes?`<p class="bed-notes">${bed.notes}</p>`:''}${ph}</div></div>`;
+      });
+
+      // Seeds
+      const seedRows = document.getElementById('seed-rows');
+      data.seeds.forEach(s => {
+        const plant=plantMap[s.plant_id], expiring=s.expiry_year<=currentYear+1;
+        seedRows.innerHTML += `<tr><td>${plant?plant.name:s.plant_id}</td><td><strong>${s.variety}</strong></td><td>${s.supplier}</td><td>${s.purchase_date}</td><td class="${expiring?'expiry-warn':''}}">${s.expiry_year}</td><td>${s.quantity_seeds}</td><td>${s.notes||''}</td></tr>`;
+      });
+    })
+    .catch(err => { document.querySelector('main').innerHTML=`<p style="color:red">Could not load garden-data.json: ${err.message}</p>`; });
 </script>
 </body>
 </html>
