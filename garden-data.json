@@ -249,6 +249,7 @@
         "length_m": 2.4,
         "width_m": 1.2,
         "notes": "Raised bed, 30 cm deep. Good drainage.",
+        "position": { "x_m": 0, "y_m": 0 },
         "plantings": []
       },
       {
@@ -257,6 +258,7 @@
         "length_m": 1.8,
         "width_m": 1.2,
         "notes": "Partial afternoon shade from fence. Good for lettuce.",
+        "position": { "x_m": 3.0, "y_m": 0 },
         "plantings": [
           {
             "id": "planting-01",
@@ -290,6 +292,7 @@
         "length_m": 3.0,
         "width_m": 1.5,
         "notes": "Sunniest spot. Against south wall for extra heat.",
+        "position": { "x_m": 0, "y_m": 1.8 },
         "plantings": [
           {
             "id": "planting-03",
@@ -323,6 +326,7 @@
         "length_m": 2.4,
         "width_m": 1.2,
         "notes": "Deep loamy soil, no recent manure. Pea netting at north end.",
+        "position": { "x_m": 3.6, "y_m": 1.8 },
         "plantings": [
           {
             "id": "planting-05",

@@ -189,6 +189,16 @@
 
     .sunlight-icon { font-size: 1rem; }
 
+    /* Garden map */
+    .map-subtitle { font-size: 0.85rem; color: var(--grey); margin-bottom: 1rem; }
+    #map-wrap { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+    #garden-svg { background: #c8e6c9; border-radius: 8px; border: 1px solid #a5d6a7; display: block; overflow: visible; }
+    #map-legend { background: var(--white); border: 1px solid #dde3d8; border-radius: var(--radius); padding: 0.75rem 1rem; min-width: 170px; font-size: 0.84rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .legend-title { font-weight: 700; color: var(--green-dark); margin-bottom: 0.5rem; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.12); }
+    #map-tooltip { position: fixed; background: rgba(30,30,30,0.92); color: #fff; padding: 0.45rem 0.7rem; border-radius: 6px; font-size: 0.82rem; pointer-events: none; z-index: 200; max-width: 210px; line-height: 1.5; display: none; }
+
     @media (max-width: 600px) {
       main { padding: 1rem; }
       nav button { padding: 0.5rem 0.75rem; font-size: 0.85rem; }
@@ -207,6 +217,7 @@
   <button class="active" onclick="show('plants', this)">Plants</button>
   <button onclick="show('garden', this)">Garden Beds</button>
   <button onclick="show('seeds', this)">Seed Inventory</button>
+  <button onclick="show('layout', this)">Map</button>
 </nav>
 
 <main>
@@ -218,6 +229,15 @@
   <section id="garden">
     <h2>Garden Layout</h2>
     <div class="beds" id="bed-list"></div>
+  </section>
+
+  <section id="layout">
+    <h2>Garden Map</h2>
+    <p class="map-subtitle">Beds drawn to scale. Hover a planting zone for details.</p>
+    <div id="map-wrap">
+      <svg id="garden-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div id="map-legend"></div>
+    </div>
   </section>
 
   <section id="seeds">
@@ -239,14 +259,164 @@
   </section>
 </main>
 
+<div id="map-tooltip"></div>
+
 <script>
   const currentYear = new Date().getFullYear();
+
+  let gardenData = null;
+  let layoutRendered = false;
 
   function show(id, btn) {
     document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
+    if (id === 'layout' && gardenData && !layoutRendered) {
+      renderLayout(gardenData);
+      layoutRendered = true;
+    }
+  }
+
+  function renderLayout(data) {
+    const SCALE = 80, MARGIN = 55;
+    const NS = 'http://www.w3.org/2000/svg';
+    const PALETTE = ['#e53935','#558b2f','#ef6c00','#6a1b9a','#0097a7','#f9a825','#1565c0','#6d4c41'];
+    const PLANT_COLORS = {};
+    data.plants.forEach((p, i) => { PLANT_COLORS[p.id] = PALETTE[i % PALETTE.length]; });
+    const STATUS_OPACITY = { planned: 0.35, sown: 0.6, growing: 1, harvesting: 1, harvested: 0.5, failed: 0.2 };
+    const plantMap = Object.fromEntries(data.plants.map(p => [p.id, p]));
+
+    let maxX = 0, maxY = 0;
+    data.garden.beds.forEach(b => {
+      const pos = b.position || { x_m: 0, y_m: 0 };
+      maxX = Math.max(maxX, pos.x_m + b.length_m);
+      maxY = Math.max(maxY, pos.y_m + b.width_m);
+    });
+
+    const svgW = maxX * SCALE + MARGIN * 2;
+    const svgH = maxY * SCALE + MARGIN * 2 + 30;
+
+    function el(tag, attrs) {
+      const e = document.createElementNS(NS, tag);
+      Object.entries(attrs || {}).forEach(([k, v]) => e.setAttribute(k, v));
+      return e;
+    }
+    function txt(tag, attrs, text) { const e = el(tag, attrs); e.textContent = text; return e; }
+
+    const svg = document.getElementById('garden-svg');
+    svg.setAttribute('width', svgW);
+    svg.setAttribute('height', svgH);
+    svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+    svg.innerHTML = '';
+
+    // Defs — hatch for planned status
+    const defs = el('defs');
+    const pat = el('pattern', { id: 'hatch', width: 6, height: 6, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' });
+    pat.appendChild(el('line', { x1: 0, y1: 0, x2: 0, y2: 6, stroke: 'rgba(255,255,255,0.55)', 'stroke-width': 2 }));
+    defs.appendChild(pat);
+    svg.appendChild(defs);
+
+    // Backgrounds
+    svg.appendChild(el('rect', { width: svgW, height: svgH, fill: '#a5d6a7' }));
+    svg.appendChild(el('rect', { x: MARGIN - 12, y: MARGIN - 12, width: maxX * SCALE + 24, height: maxY * SCALE + 24, fill: '#d7ccc8', rx: 8 }));
+
+    // North indicator
+    const nx = svgW - 24, ny = 24;
+    svg.appendChild(el('polygon', { points: `${nx},${ny-10} ${nx-5},${ny+2} ${nx+5},${ny+2}`, fill: '#2d5a27' }));
+    svg.appendChild(txt('text', { x: nx, y: ny + 14, 'text-anchor': 'middle', fill: '#2d5a27', 'font-size': 10, 'font-weight': 'bold', 'font-family': 'sans-serif' }, 'N'));
+
+    const tooltip = document.getElementById('map-tooltip');
+
+    data.garden.beds.forEach(bed => {
+      const pos = bed.position || { x_m: 0, y_m: 0 };
+      const bx = MARGIN + pos.x_m * SCALE;
+      const by = MARGIN + pos.y_m * SCALE;
+      const bw = bed.length_m * SCALE;
+      const bh = bed.width_m * SCALE;
+      const plantings = bed.plantings || [];
+
+      // Soil
+      svg.appendChild(el('rect', { x: bx, y: by, width: bw, height: bh, fill: '#8d6e63', rx: 4 }));
+
+      if (plantings.length > 0) {
+        const zoneW = bw / plantings.length;
+        plantings.forEach((pl, i) => {
+          const color = PLANT_COLORS[pl.plant_id] || '#9e9e9e';
+          const opacity = STATUS_OPACITY[pl.status] ?? 1;
+          const zx = bx + i * zoneW;
+          const isFirst = i === 0, isLast = i === plantings.length - 1;
+
+          svg.appendChild(el('rect', { x: zx, y: by, width: zoneW, height: bh, fill: color, opacity }));
+          if (pl.status === 'planned') {
+            svg.appendChild(el('rect', { x: zx, y: by, width: zoneW, height: bh, fill: 'url(#hatch)' }));
+          }
+
+          if (zoneW > 32) {
+            const plant = plantMap[pl.plant_id];
+            const name = plant ? plant.name.split(' ')[0] : pl.plant_id;
+            const fs = Math.max(9, Math.min(12, zoneW / 7));
+            svg.appendChild(txt('text', {
+              x: zx + zoneW / 2, y: by + bh / 2 - (bh > 50 ? 7 : 0),
+              'text-anchor': 'middle', 'dominant-baseline': 'middle',
+              fill: '#fff', 'font-size': fs, 'font-weight': 'bold', 'font-family': 'sans-serif',
+              'paint-order': 'stroke', 'stroke': 'rgba(0,0,0,0.3)', 'stroke-width': 2
+            }, name));
+            if (bh > 50) {
+              svg.appendChild(txt('text', {
+                x: zx + zoneW / 2, y: by + bh / 2 + 8,
+                'text-anchor': 'middle', 'dominant-baseline': 'middle',
+                fill: 'rgba(255,255,255,0.88)', 'font-size': Math.max(8, fs - 2), 'font-family': 'sans-serif'
+              }, pl.status));
+            }
+          }
+
+          // Divider between zones
+          if (i > 0) svg.appendChild(el('line', { x1: zx, y1: by, x2: zx, y2: by + bh, stroke: 'rgba(0,0,0,0.2)', 'stroke-width': 1, 'stroke-dasharray': '3,2' }));
+
+          // Hit target for tooltip
+          const hit = el('rect', { x: zx, y: by, width: zoneW, height: bh, fill: 'transparent', cursor: 'pointer' });
+          hit.addEventListener('mouseenter', () => {
+            const plant = plantMap[pl.plant_id];
+            tooltip.innerHTML = `<strong>${plant ? plant.name : pl.plant_id}</strong><br>Status: <em>${pl.status}</em><br>Qty: ${pl.quantity_plants ?? '?'} plants${pl.sown_date ? '<br>Sown: ' + pl.sown_date : ''}${pl.expected_harvest_date ? '<br>Harvest: ' + pl.expected_harvest_date : ''}${pl.notes ? '<br><span style="opacity:.8">' + pl.notes + '</span>' : ''}`;
+            tooltip.style.display = 'block';
+          });
+          hit.addEventListener('mousemove', e => {
+            tooltip.style.left = (e.clientX + 14) + 'px';
+            tooltip.style.top = (e.clientY - 10) + 'px';
+          });
+          hit.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+          svg.appendChild(hit);
+        });
+      }
+
+      // Bed border
+      svg.appendChild(el('rect', { x: bx, y: by, width: bw, height: bh, fill: 'none', stroke: '#5d4037', 'stroke-width': 2, rx: 4 }));
+
+      // Bed label above
+      svg.appendChild(txt('text', {
+        x: bx + bw / 2, y: by - 8,
+        'text-anchor': 'middle', fill: '#3e2723', 'font-size': 11, 'font-weight': 'bold', 'font-family': 'sans-serif'
+      }, bed.name.split('—')[0].trim() + ` (${bed.length_m}×${bed.width_m} m)`));
+    });
+
+    // Scale bar
+    const sx = MARGIN, sy = svgH - 14;
+    svg.appendChild(el('line', { x1: sx, y1: sy, x2: sx + SCALE, y2: sy, stroke: '#555', 'stroke-width': 2 }));
+    svg.appendChild(el('line', { x1: sx, y1: sy - 4, x2: sx, y2: sy + 4, stroke: '#555', 'stroke-width': 2 }));
+    svg.appendChild(el('line', { x1: sx + SCALE, y1: sy - 4, x2: sx + SCALE, y2: sy + 4, stroke: '#555', 'stroke-width': 2 }));
+    svg.appendChild(txt('text', { x: sx + SCALE / 2, y: sy - 7, 'text-anchor': 'middle', fill: '#555', 'font-size': 10, 'font-family': 'sans-serif' }, '1 m'));
+
+    // Legend
+    const legend = document.getElementById('map-legend');
+    const usedPlants = data.plants.filter(p => data.garden.beds.some(b => b.plantings && b.plantings.some(pl => pl.plant_id === p.id)));
+    legend.innerHTML =
+      `<div class="legend-title">Plants</div>` +
+      usedPlants.map(p => `<div class="legend-item"><div class="legend-swatch" style="background:${PLANT_COLORS[p.id]}"></div>${p.name}</div>`).join('') +
+      `<div class="legend-title" style="margin-top:0.75rem">Status</div>` +
+      [['planned','35%'],['sown','60%'],['growing','100%'],['harvesting','100%'],['harvested','50%']].map(([s, o]) =>
+        `<div class="legend-item"><div class="legend-swatch" style="background:#666;opacity:${o}"></div>${s.charAt(0).toUpperCase()+s.slice(1)}</div>`
+      ).join('');
   }
 
   function sunlightLabel(v) {
@@ -267,6 +437,7 @@
   fetch('garden-data.json')
     .then(r => r.json())
     .then(data => {
+      gardenData = data;
       const plantMap = Object.fromEntries(data.plants.map(p => [p.id, p]));
 
       // --- Plants ---
