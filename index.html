@@ -189,7 +189,8 @@
       <div class="map-toolbar-right">
         <button class="tool-btn" id="undo-btn" onclick="undo()" disabled title="Undo last change (drag or edit)">↩ Undo</button>
         <button class="tool-btn" onclick="resetAll()">Reset all</button>
-        <button class="tool-btn tool-btn-primary" onclick="exportJSON()" title="Download garden-data.json with all changes baked in">Save JSON</button>
+        <button class="tool-btn" id="clear-token-btn" onclick="clearGHToken()" style="display:none" title="Clear stored GitHub token">⚙ Token</button>
+        <button class="tool-btn tool-btn-primary" onclick="saveToGitHub()">Save to GitHub</button>
       </div>
     </div>
     <div id="map-wrap">
@@ -242,7 +243,7 @@
 
       </div><!-- /sidebar -->
     </div><!-- /map-wrap -->
-    <p class="map-hint">Drag beds to move · Click to edit name, colour &amp; size · 25 cm snap grid · Auto-saved in browser · Use ↩ Undo to revert the last drag or edit · Save JSON to export changes to file</p>
+    <p class="map-hint">Drag beds to move · Click to edit name, colour &amp; size · 25 cm snap grid · Save to GitHub commits changes directly to garden-data.json in the repo</p>
   </section>
 </main>
 
@@ -274,22 +275,25 @@
   function loadOv()  { try { return JSON.parse(localStorage.getItem(OV_KEY)  || '{}'); } catch { return {}; } }
   function saveOv(o) { try { localStorage.setItem(OV_KEY,  JSON.stringify(o)); } catch {} }
 
-  /* ── reset / export ── */
-  function resetAll() {
-    if (!confirm('Reset all positions and edits back to defaults?')) return;
-    localStorage.removeItem(POS_KEY);
-    localStorage.removeItem(OV_KEY);
-    undoStack = [];
-    refreshUndoBtn();
-    closeEditor();
-    layoutRendered = false;
-    if (gardenData) { renderLayout(gardenData); layoutRendered = true; }
+  /* ── GitHub save ── */
+  const GH_TOKEN_KEY = 'gardenGitHubToken';
+  const GH_API = 'https://api.github.com/repos/lysholt/Have/contents/garden-data.json';
+
+  function refreshTokenBtn() {
+    const btn = document.getElementById('clear-token-btn');
+    if (btn) btn.style.display = localStorage.getItem(GH_TOKEN_KEY) ? 'inline-block' : 'none';
   }
 
-  function exportJSON() {
-    if (!gardenData) return;
+  function clearGHToken() {
+    if (!confirm('Clear stored GitHub token?')) return;
+    localStorage.removeItem(GH_TOKEN_KEY);
+    refreshTokenBtn();
+  }
+
+  function mergedJSON() {
     const pos = loadPos(), ov = loadOv();
     const copy = JSON.parse(JSON.stringify(gardenData));
+    copy.last_updated = new Date().toISOString().split('T')[0];
     copy.garden.beds.forEach(bed => {
       const o = ov[bed.id] || {};
       if (o.name)     bed.name     = o.name;
@@ -299,11 +303,81 @@
       const p = pos[bed.id];
       if (p) bed.position = { x_m: p.x_m, y_m: p.y_m };
     });
-    const blob = new Blob([JSON.stringify(copy, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'garden-data.json';
-    a.click();
+    return copy;
+  }
+
+  function toBase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    return btoa(String.fromCharCode(...bytes));
+  }
+
+  async function saveToGitHub() {
+    if (!gardenData) return;
+    let token = localStorage.getItem(GH_TOKEN_KEY);
+    if (!token) {
+      token = prompt('GitHub Personal Access Token\n(needs Contents: write on lysholt/Have)\n\nStored in browser only — never sent anywhere except api.github.com:');
+      if (!token) return;
+      localStorage.setItem(GH_TOKEN_KEY, token.trim());
+      refreshTokenBtn();
+    }
+
+    const statusEl = document.getElementById('map-pos-display');
+    statusEl.textContent = 'Saving to GitHub…';
+
+    const copy = mergedJSON();
+    const jsonStr = JSON.stringify(copy, null, 2);
+    const hdrs = {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+
+    try {
+      const getResp = await fetch(GH_API, { headers: hdrs });
+      if (getResp.status === 401) {
+        localStorage.removeItem(GH_TOKEN_KEY); refreshTokenBtn();
+        throw new Error('Token rejected — cleared. Try again to re-enter.');
+      }
+      if (!getResp.ok) throw new Error(`GET failed ${getResp.status}`);
+      const { sha } = await getResp.json();
+
+      const putResp = await fetch(GH_API, {
+        method: 'PUT',
+        headers: { ...hdrs, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'Update garden layout via planner', content: toBase64(jsonStr), sha })
+      });
+      if (!putResp.ok) {
+        const e = await putResp.json().catch(() => ({}));
+        throw new Error(e.message || `PUT failed ${putResp.status}`);
+      }
+
+      // Adopt saved state — clear working overrides
+      gardenData = copy;
+      localStorage.removeItem(POS_KEY);
+      localStorage.removeItem(OV_KEY);
+      undoStack = []; refreshUndoBtn();
+      closeEditor();
+      layoutRendered = false; renderLayout(gardenData); layoutRendered = true;
+      statusEl.textContent = 'Saved to GitHub ✓';
+      setTimeout(() => { statusEl.textContent = 'Click a bed to edit · Drag to move'; }, 3000);
+    } catch (err) {
+      console.error('GitHub save:', err);
+      statusEl.textContent = 'Save failed';
+      setTimeout(() => { statusEl.textContent = 'Click a bed to edit · Drag to move'; }, 3000);
+      alert('Save failed: ' + err.message);
+    }
+  }
+
+  /* ── reset ── */
+  function resetAll() {
+    if (!confirm('Reset all positions and edits back to defaults?')) return;
+    localStorage.removeItem(POS_KEY);
+    localStorage.removeItem(OV_KEY);
+    undoStack = [];
+    refreshUndoBtn();
+    closeEditor();
+    layoutRendered = false;
+    if (gardenData) { renderLayout(gardenData); layoutRendered = true; }
   }
 
   /* ── undo history ── */
@@ -354,7 +428,6 @@
   function closeEditor() {
     editingBedId = null;
     document.getElementById('bed-editor').style.display = 'none';
-    // remove selection highlight
     document.querySelectorAll('.bed-selected').forEach(el => el.classList.remove('bed-selected'));
   }
 
@@ -396,7 +469,6 @@
     const STATUS_OPACITY = { planned:.35, sown:.6, growing:1, harvesting:1, harvested:.5, failed:.2 };
     const plantMap = Object.fromEntries(data.plants.map(p => [p.id, p]));
 
-    // Resolve positions and overrides
     const savedPos = loadPos();
     const ov = loadOv();
     const pos = {};
@@ -421,17 +493,14 @@
     svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
     svg.innerHTML = '';
 
-    // Defs
     const defs = el('defs');
     const pat = el('pattern', { id:'hatch', width:6, height:6, patternUnits:'userSpaceOnUse', patternTransform:'rotate(45)' });
     pat.appendChild(el('line', { x1:0,y1:0,x2:0,y2:6, stroke:'rgba(255,255,255,.55)', 'stroke-width':2 }));
     defs.appendChild(pat); svg.appendChild(defs);
 
-    // Background
     svg.appendChild(el('rect', { width:svgW, height:svgH, fill:'#a5d6a7' }));
     svg.appendChild(el('rect', { x:MARGIN-14, y:MARGIN-14, width:CW*SCALE+28, height:CH*SCALE+28, fill:'#d7ccc8', rx:10 }));
 
-    // Grid
     for (let gx = 0; gx <= CW; gx += .5) {
       const x = MARGIN + gx*SCALE, major = Number.isInteger(gx);
       svg.appendChild(el('line', { x1:x,y1:MARGIN-14,x2:x,y2:MARGIN+CH*SCALE+14, stroke:major?'rgba(0,0,0,.12)':'rgba(0,0,0,.055)', 'stroke-width':major?1:.5 }));
@@ -443,12 +512,10 @@
     for (let gx = 0; gx <= CW; gx++) svg.appendChild(txt('text', { x:MARGIN+gx*SCALE, y:MARGIN-20,'text-anchor':'middle',fill:'#777','font-size':9,'font-family':'sans-serif' }, gx+'m'));
     for (let gy = 0; gy <= CH; gy++) svg.appendChild(txt('text', { x:MARGIN-20, y:MARGIN+gy*SCALE+1,'text-anchor':'middle','dominant-baseline':'middle',fill:'#777','font-size':9,'font-family':'sans-serif' }, gy+'m'));
 
-    // North
     const nx=svgW-26, ny=26;
     svg.appendChild(el('polygon', { points:`${nx},${ny-11} ${nx-5},${ny+3} ${nx+5},${ny+3}`, fill:'#2d5a27' }));
     svg.appendChild(txt('text', { x:nx,y:ny+16,'text-anchor':'middle',fill:'#2d5a27','font-size':10,'font-weight':'bold','font-family':'sans-serif' }, 'N'));
 
-    // Scale bar
     const sx=MARGIN, sy=svgH-14;
     svg.appendChild(el('line', { x1:sx,y1:sy,x2:sx+SCALE,y2:sy,stroke:'#555','stroke-width':2 }));
     svg.appendChild(el('line', { x1:sx,y1:sy-4,x2:sx,y2:sy+4,stroke:'#555','stroke-width':2 }));
@@ -469,7 +536,6 @@
     function snapV(v) { return Math.round(v / SNAP) * SNAP; }
 
     data.garden.beds.forEach(bed => {
-      // Apply overrides to bed properties
       const bedOv  = ov[bed.id] || {};
       const name   = bedOv.name    || bed.name;
       const colour = bedOv.colour  || '#8d6e63';
@@ -479,16 +545,12 @@
       const bh = wm * SCALE;
       const bedPos = pos[bed.id];
 
-      // Lighter version of colour for empty-bed fill
       const g = el('g', { cursor:'grab', 'data-bed-id': bed.id });
       g.setAttribute('transform', `translate(${MARGIN + bedPos.x_m*SCALE},${MARGIN + bedPos.y_m*SCALE})`);
 
-      // Shadow
       g.appendChild(el('rect', { x:3,y:3,width:bw,height:bh, fill:'rgba(0,0,0,.18)', rx:4, 'pointer-events':'none' }));
-      // Soil / bed base colour
       g.appendChild(el('rect', { x:0,y:0,width:bw,height:bh, fill:colour, rx:4 }));
 
-      // Planting zones
       const plantings = bed.plantings || [];
       if (plantings.length > 0) {
         const zW = bw / plantings.length;
@@ -507,7 +569,6 @@
           }
           if (i > 0) g.appendChild(el('line', { x1:zx,y1:0,x2:zx,y2:bh, stroke:'rgba(0,0,0,.2)','stroke-width':1,'stroke-dasharray':'3,2' }));
 
-          // Tooltip hit
           const hit = el('rect', { x:zx,y:0,width:zW,height:bh, fill:'transparent' });
           hit.addEventListener('mouseenter', () => {
             if (isDraggingAny) return;
@@ -521,19 +582,15 @@
         });
       }
 
-      // Border — use custom colour (darkened) for stroke
       g.appendChild(el('rect', { x:0,y:0,width:bw,height:bh, fill:'none', stroke:colour, 'stroke-width':2.5, rx:4 }));
-      // Selection highlight rect (hidden by default)
       const selRect = el('rect', { x:-3,y:-3,width:bw+6,height:bh+6, fill:'none', stroke:'#fff', 'stroke-width':2.5, rx:6, 'stroke-dasharray':'5,3', opacity:0, 'pointer-events':'none', 'class':'sel-rect' });
       g.appendChild(selRect);
 
-      // Label
       const shortName = name.split('—')[0].trim();
       g.appendChild(txt('text', { x:bw/2,y:-8,'text-anchor':'middle',fill:'#3e2723','font-size':11,'font-weight':'bold','font-family':'sans-serif','pointer-events':'none' }, `${shortName} (${lm}×${wm} m)`));
 
       svg.appendChild(g);
 
-      /* ── drag + click ── */
       let dragging   = false;
       let dragMoved  = false;
       let originSVG  = { x:0, y:0 };
@@ -550,7 +607,7 @@
         originSVG = { x:p.x, y:p.y };
         originPos = { ...pos[bed.id] };
         g.setAttribute('cursor','grabbing');
-        svg.appendChild(g); // bring to front
+        svg.appendChild(g);
       }
 
       function moveDrag(e) {
@@ -565,7 +622,6 @@
         pos[bed.id].x_m = nx; pos[bed.id].y_m = ny;
         g.setAttribute('transform', `translate(${MARGIN+nx*SCALE},${MARGIN+ny*SCALE})`);
         posLabel.textContent = `${shortName} → (${nx.toFixed(2)} m, ${ny.toFixed(2)} m)`;
-        // sync editor if open
         if (editingBedId === bed.id) {
           document.getElementById('edit-x').value = nx.toFixed(2);
           document.getElementById('edit-y').value = ny.toFixed(2);
@@ -578,20 +634,16 @@
         g.setAttribute('cursor','grab');
 
         if (!dragMoved) {
-          // treat as click → open editor
           openEditor(bed, pos, ov);
-          // highlight selection
           selRect.setAttribute('opacity', 1);
           posLabel.textContent = `Editing ${shortName}`;
           return;
         }
 
-        // push pre-drag state for undo (bed's pre-drag position via originPos)
         const prevPosSnap = loadPos();
         prevPosSnap[bed.id] = { ...originPos };
         pushHistory({ pos: prevPosSnap, ov: JSON.parse(JSON.stringify(ov)) });
 
-        // snap on drop
         const fx = clamp(snapV(pos[bed.id].x_m), 0, CW-lm);
         const fy = clamp(snapV(pos[bed.id].y_m), 0, CH-wm);
         pos[bed.id].x_m = fx; pos[bed.id].y_m = fy;
@@ -612,7 +664,6 @@
       window.addEventListener('touchend',  endDrag);
     });
 
-    /* ── legend ── */
     const legend = document.getElementById('map-legend');
     const usedPlants = data.plants.filter(p => data.garden.beds.some(b => b.plantings && b.plantings.some(pl => pl.plant_id===p.id)));
     legend.innerHTML =
@@ -640,9 +691,9 @@
     .then(r => r.json())
     .then(data => {
       gardenData = data;
+      refreshTokenBtn();
       const plantMap = Object.fromEntries(data.plants.map(p => [p.id, p]));
 
-      // Plants
       const plantCards = document.getElementById('plant-cards');
       data.plants.forEach(p => {
         const harvest = p.harvest?`${p.harvest.days_to_maturity_min}–${p.harvest.days_to_maturity_max} days`:'—';
@@ -652,7 +703,6 @@
         plantCards.innerHTML += `<div class="card"><span class="badge ${p.category}">${p.category}</span><h3>${p.name}</h3><p class="latin">${p.latin_name}</p><div class="detail-row"><span class="label">Sowing</span><span class="value">${sowingInfo(p)}</span></div><div class="detail-row"><span class="label">Seed depth</span><span class="value">${depth}</span></div><div class="detail-row"><span class="label">Germination</span><span class="value">${germ}</span></div><div class="detail-row"><span class="label">Days to harvest</span><span class="value">${harvest}</span></div><div class="detail-row"><span class="label">Spacing</span><span class="value">${spacing}</span></div><div class="detail-row"><span class="label">Sunlight</span><span class="value">${sunlightLabel(p.care.sunlight)}</span></div><div class="detail-row"><span class="label">Watering</span><span class="value">${p.care.watering}</span></div>${p.care.notes?`<div class="notes-box">${p.care.notes}</div>`:''}</div>`;
       });
 
-      // Beds list
       const bedList = document.getElementById('bed-list');
       data.garden.beds.forEach(bed => {
         const area = (bed.length_m*bed.width_m).toFixed(1);
@@ -664,11 +714,10 @@
         bedList.innerHTML += `<div class="bed-card"><div class="bed-header"><h3>${bed.name}</h3><span class="bed-dims">${bed.length_m} m × ${bed.width_m} m (${area} m²)</span></div><div class="bed-body">${bed.notes?`<p class="bed-notes">${bed.notes}</p>`:''}${ph}</div></div>`;
       });
 
-      // Seeds
       const seedRows = document.getElementById('seed-rows');
       data.seeds.forEach(s => {
         const plant=plantMap[s.plant_id], expiring=s.expiry_year<=currentYear+1;
-        seedRows.innerHTML += `<tr><td>${plant?plant.name:s.plant_id}</td><td><strong>${s.variety}</strong></td><td>${s.supplier}</td><td>${s.purchase_date}</td><td class="${expiring?'expiry-warn':''}}">${s.expiry_year}</td><td>${s.quantity_seeds}</td><td>${s.notes||''}</td></tr>`;
+        seedRows.innerHTML += `<tr><td>${plant?plant.name:s.plant_id}</td><td><strong>${s.variety}</strong></td><td>${s.supplier}</td><td>${s.purchase_date}</td><td class="${expiring?'expiry-warn':''}">${s.expiry_year}</td><td>${s.quantity_seeds}</td><td>${s.notes||''}</td></tr>`;
       });
     })
     .catch(err => { document.querySelector('main').innerHTML=`<p style="color:red">Could not load garden-data.json: ${err.message}</p>`; });
