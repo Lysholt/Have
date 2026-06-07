@@ -189,7 +189,8 @@
       <div class="map-toolbar-right">
         <button class="tool-btn" id="undo-btn" onclick="undo()" disabled title="Undo last change (drag or edit)">↩ Undo</button>
         <button class="tool-btn" onclick="resetAll()">Reset all</button>
-        <button class="tool-btn tool-btn-primary" onclick="exportJSON()" title="Download garden-data.json with all changes baked in">Save JSON</button>
+        <button class="tool-btn" id="clear-token-btn" onclick="clearGHToken()" style="display:none" title="Clear stored GitHub token">⚙ Token</button>
+        <button class="tool-btn tool-btn-primary" onclick="saveToGitHub()">Save to GitHub</button>
       </div>
     </div>
     <div id="map-wrap">
@@ -242,7 +243,7 @@
 
       </div><!-- /sidebar -->
     </div><!-- /map-wrap -->
-    <p class="map-hint">Drag beds to move · Click to edit name, colour & size · 25 cm snap grid · Auto-saved in browser · Use ↩ Undo to revert the last drag or edit · Save JSON to export changes to file</p>
+    <p class="map-hint">Drag beds to move · Click to edit name, colour & size · 25 cm snap grid · Save to GitHub commits changes directly to garden-data.json in the repo</p>
   </section>
 </main>
 
@@ -274,22 +275,25 @@
   function loadOv()  { try { return JSON.parse(localStorage.getItem(OV_KEY)  || '{}'); } catch { return {}; } }
   function saveOv(o) { try { localStorage.setItem(OV_KEY,  JSON.stringify(o)); } catch {} }
 
-  /* ── reset / export ── */
-  function resetAll() {
-    if (!confirm('Reset all positions and edits back to defaults?')) return;
-    localStorage.removeItem(POS_KEY);
-    localStorage.removeItem(OV_KEY);
-    undoStack = [];
-    refreshUndoBtn();
-    closeEditor();
-    layoutRendered = false;
-    if (gardenData) { renderLayout(gardenData); layoutRendered = true; }
+  /* ── GitHub save ── */
+  const GH_TOKEN_KEY = 'gardenGitHubToken';
+  const GH_API = 'https://api.github.com/repos/lysholt/Have/contents/garden-data.json';
+
+  function refreshTokenBtn() {
+    const btn = document.getElementById('clear-token-btn');
+    if (btn) btn.style.display = localStorage.getItem(GH_TOKEN_KEY) ? 'inline-block' : 'none';
   }
 
-  function exportJSON() {
-    if (!gardenData) return;
+  function clearGHToken() {
+    if (!confirm('Clear stored GitHub token?')) return;
+    localStorage.removeItem(GH_TOKEN_KEY);
+    refreshTokenBtn();
+  }
+
+  function mergedJSON() {
     const pos = loadPos(), ov = loadOv();
     const copy = JSON.parse(JSON.stringify(gardenData));
+    copy.last_updated = new Date().toISOString().split('T')[0];
     copy.garden.beds.forEach(bed => {
       const o = ov[bed.id] || {};
       if (o.name)     bed.name     = o.name;
@@ -299,11 +303,81 @@
       const p = pos[bed.id];
       if (p) bed.position = { x_m: p.x_m, y_m: p.y_m };
     });
-    const blob = new Blob([JSON.stringify(copy, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'garden-data.json';
-    a.click();
+    return copy;
+  }
+
+  function toBase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    return btoa(String.fromCharCode(...bytes));
+  }
+
+  async function saveToGitHub() {
+    if (!gardenData) return;
+    let token = localStorage.getItem(GH_TOKEN_KEY);
+    if (!token) {
+      token = prompt('GitHub Personal Access Token\n(needs Contents: write on lysholt/Have)\n\nStored in browser only — never sent anywhere except api.github.com:');
+      if (!token) return;
+      localStorage.setItem(GH_TOKEN_KEY, token.trim());
+      refreshTokenBtn();
+    }
+
+    const statusEl = document.getElementById('map-pos-display');
+    statusEl.textContent = 'Saving to GitHub…';
+
+    const copy = mergedJSON();
+    const jsonStr = JSON.stringify(copy, null, 2);
+    const hdrs = {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+
+    try {
+      const getResp = await fetch(GH_API, { headers: hdrs });
+      if (getResp.status === 401) {
+        localStorage.removeItem(GH_TOKEN_KEY); refreshTokenBtn();
+        throw new Error('Token rejected — cleared. Try again to re-enter.');
+      }
+      if (!getResp.ok) throw new Error(`GET failed ${getResp.status}`);
+      const { sha } = await getResp.json();
+
+      const putResp = await fetch(GH_API, {
+        method: 'PUT',
+        headers: { ...hdrs, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'Update garden layout via planner', content: toBase64(jsonStr), sha })
+      });
+      if (!putResp.ok) {
+        const e = await putResp.json().catch(() => ({}));
+        throw new Error(e.message || `PUT failed ${putResp.status}`);
+      }
+
+      // Adopt saved state — clear working overrides
+      gardenData = copy;
+      localStorage.removeItem(POS_KEY);
+      localStorage.removeItem(OV_KEY);
+      undoStack = []; refreshUndoBtn();
+      closeEditor();
+      layoutRendered = false; renderLayout(gardenData); layoutRendered = true;
+      statusEl.textContent = 'Saved to GitHub ✓';
+      setTimeout(() => { statusEl.textContent = 'Click a bed to edit · Drag to move'; }, 3000);
+    } catch (err) {
+      console.error('GitHub save:', err);
+      statusEl.textContent = 'Save failed';
+      setTimeout(() => { statusEl.textContent = 'Click a bed to edit · Drag to move'; }, 3000);
+      alert('Save failed: ' + err.message);
+    }
+  }
+
+  /* ── reset ── */
+  function resetAll() {
+    if (!confirm('Reset all positions and edits back to defaults?')) return;
+    localStorage.removeItem(POS_KEY);
+    localStorage.removeItem(OV_KEY);
+    undoStack = [];
+    refreshUndoBtn();
+    closeEditor();
+    layoutRendered = false;
+    if (gardenData) { renderLayout(gardenData); layoutRendered = true; }
   }
 
   /* ── undo history ── */
@@ -640,6 +714,7 @@
     .then(r => r.json())
     .then(data => {
       gardenData = data;
+      refreshTokenBtn();
       const plantMap = Object.fromEntries(data.plants.map(p => [p.id, p]));
 
       // Plants
